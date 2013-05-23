@@ -26,7 +26,7 @@ MYSQLBIN=/usr/bin/mysql
 MYSQLPASSWD=ensi031X
 DATABASE=medocs
 CSVOUTPUT=export.csv
-PYTHONBIN=/usr/bin/python2.7
+PYTHONBIN=/usr/local/bin/python2.7
 
 echoerr()
 { 
@@ -75,7 +75,7 @@ checkFiles()
 {
 	cd ${WORKDIR}
 
-	for i in `ls *.txt`; do
+	for i in *.txt; do
 		A=`/usr/bin/md5sum ${i}` | /bin/cut -f 1
 		B=`/usr/bin/md5sum ${BACKUPDIR}/${i}.${DATUM}` | /bin/cut -f 1 
 
@@ -83,6 +83,7 @@ checkFiles()
 		echo ${B}
 
 		if [[ ${A} == ${B} ]]; then
+			echo "Removing ${BACKUPDIR}/${i}.${DATUM}"
 			/bin/rm ${BACKUPDIR}/${i}.${DATUM}
 		fi
 	done
@@ -93,6 +94,7 @@ convertFiles()
 	cd ${WORKDIR}
 	for i in `ls *.txt`; do
 		filename=`/bin/basename ${i} .txt`
+		echo "Converting $i into ${filename}.csv"
 		/usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} | /usr/bin/tr "\t" ";" > ${filename}.csv
 	done
 }
@@ -104,7 +106,7 @@ importCSVFiles()
 		echoerr "Error in importCSVFiles, cannot find import_csv.sql file"
 		exit 255
 	fi
-	${MYSQLBIN} -u root -p${MYSQLPASSWD} ${DATABASE} < ${WORKDIR}/import_csv.sql 
+	${MYSQLBIN} -u root -p${MYSQLPASSWD} < ${WORKDIR}/import_csv.sql 
 
 	if [[ $? != 0 ]]; then
 		echo "Error during sql import, please check log file"
@@ -120,7 +122,12 @@ exportSelectionToCSVFile()
 		/bin/rm ${WORKDIR}/${CSVOUTPUT}
 	fi
 
-	${MYSQLBIN} -u root -p${MYSQLPASSWD} ${DATABASE} < "SELECT CIS_CIP.cis, CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7 FROM CIS_CIP,CIS WHERE CIS.cis = CIS_CIP.cis AND CIS.etat_commercial=\"Commercialisée\" AND CIS.admin_mode IN (\"orale\", \"nasale\",\"cutanée\", \"sous-cutanée\",\"ophtalmique\",\"rectale\",\"vaginale\",\"transdermique\",\"voie buccale autre\",\"intracaverneuse\",\"oropharyngée\",\"buccogingivale\") INTO OUTFILE ${CSVOUTPUT} FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n';" 
+	if [[ ! -f ${WORKDIR}/requete.sql ]]; then
+		echoerr "Error, cannot find requete.sql file"
+		exit 255
+	fi
+
+	${MYSQLBIN} -u root -p${MYSQLPASSWD} ${DATABASE} < requete.sql > ${WORKDIR}/export.csv 
 
 	if [[ $? != 0 ]]; then
 		echoerr "Error in exportSelectionToCSVFile, please check log file"
@@ -131,12 +138,27 @@ exportSelectionToCSVFile()
 transformToMeds()
 {
 	cd ${WORKDIR}
-	${PYTHONBIN} /usr/local/bin/csv2plist.py/cvs2plist.py ${WORKDIR}/${CSVOUTPUT} Meds.plist dict
+	${PYTHONBIN} /usr/local/bin/cvs2plist.py /tmp/export.csv ${WORKDIR}/Meds.plist dict
 
 	if [[ $? != 0 ]]; then
 		echoerr "Error during cvs2plist transform, please check log file"
 		exit 255
 	fi
+}
+
+sendMail()
+{
+	/bin/mail -s "A new version of Meds.plist is available" jacques@foucry.net <<EOF
+Hello Jacques,
+
+I am your Meds.plist generator script.
+
+I'm proud to announce that a new version of the Meds.plist file is available.
+
+Sincerly Yours,
+Kinsufi
+EOF
+
 }
 
 backupFiles
@@ -146,5 +168,6 @@ convertFiles
 importCSVFiles
 exportSelectionToCSVFile
 transformToMeds
+sendMail
 
 exit 0
