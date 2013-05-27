@@ -146,19 +146,14 @@ transformToMeds()
 	fi
 }
 
+compressMeds()
+{
+	/bin/tar zcf ${WORKDIR}/Meds.plist.tgz ${WORKDIR}/Meds.plist
+}
+
 sendMail()
 {
-	/bin/mail -s "A new version of Meds.plist is available" jacques@foucry.net <<EOF
-Hello Jacques,
-
-I am your Meds.plist generator script.
-
-I'm proud to announce that a new version of the Meds.plist file is available.
-
-Sincerly Yours,
-Kinsufi
-EOF
-
+	cat ${WORKDIR}/mail.txt | /bin/mail -s "Nouvelle version de Meds.plist" jacques@foucry.net < ${WORKDIR}/Meds.plist.tgz
 }
 
 backupFiles
@@ -168,6 +163,7 @@ convertFiles
 importCSVFiles
 exportSelectionToCSVFile
 transformToMeds
+compressMeds
 sendMail
 
 exit 0
