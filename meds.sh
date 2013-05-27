@@ -133,12 +133,18 @@ exportSelectionToCSVFile()
 		echoerr "Error in exportSelectionToCSVFile, please check log file"
 		exit 255
 	fi
+
+	# Add headers
+	/bin/sed -i '1d' ${WORKDIR}/export.csv 
+	/bin/sed -i '1icis,cip13,admin,nom,pres,cip7' ${WORKDIR}/export.csv
+
 }
 
 transformToMeds()
 {
 	cd ${WORKDIR}
-	${PYTHONBIN} /usr/local/bin/cvs2plist.py /tmp/export.csv ${WORKDIR}/Meds.plist dict
+
+	${PYTHONBIN} /usr/local/bin/cvs2plist.py ${WORKDIR}/export.csv ${WORKDIR}/Meds.plist dict
 
 	if [[ $? != 0 ]]; then
 		echoerr "Error during cvs2plist transform, please check log file"
