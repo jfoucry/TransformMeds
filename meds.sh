@@ -23,6 +23,7 @@ WORKDIR=/home/jfoucry/AFM
 BACKUPDIR=/home/jfoucry/AFM/BACKUP
 DATUM=`/bin/date +"%F"`
 MYSQLBIN=/usr/bin/mysql
+SQLITEBIN=/usr/bin/sqlite3
 MYSQLPASSWD=ensi031X
 DATABASE=medocs
 CSVOUTPUT=export.csv
@@ -95,18 +96,22 @@ convertFiles()
 	for i in `ls *.txt`; do
 		filename=`/bin/basename ${i} .txt`
 		echo "Converting $i into ${filename}.csv"
-		/usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} | /usr/bin/tr "\t" ";" > ${filename}.csv
+		#/usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} | /usr/bin/tr "\t" ";" > ${filename}.csv
+		/usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} > ${filename}.csv
 	done
 }
 
 importCSVFiles()
 {
 	cd ${WORKDIR}
-	if [[ ! -f ${WORKDIR}/import_csv.sql ]]; then
+	echo "Importing CSV file into database"
+	if [[ ! -f ${WORKDIR}/import_csv-sqlite3.sql ]]; then
 		echoerr "Error in importCSVFiles, cannot find import_csv.sql file"
 		exit 255
 	fi
-	${MYSQLBIN} -u root -p${MYSQLPASSWD} < ${WORKDIR}/import_csv.sql 
+	
+	# ${MYSQLBIN} -u root -p${MYSQLPASSWD} < ${WORKDIR}/import_csv.sql 
+	${SQLITEBIN} ${WORKDIR}/${DATABASE}.sqlite3 < ${WORKDIR}/import_csv-sqlite3.sql
 
 	if [[ $? != 0 ]]; then
 		echo "Error during sql import, please check log file"
@@ -118,6 +123,7 @@ exportSelectionToCSVFile()
 {
 	cd ${WORKDIR}
 
+	echo "Exporting query result to csv file"
 	if [[ -f ${WORKDIR}/${CSVOUTPUT} ]]; then
 		/bin/rm ${WORKDIR}/${CSVOUTPUT}
 	fi
@@ -127,16 +133,16 @@ exportSelectionToCSVFile()
 		exit 255
 	fi
 
-	${MYSQLBIN} -u root -p${MYSQLPASSWD} ${DATABASE} < requete.sql > ${WORKDIR}/export.csv 
-
+	# ${MYSQLBIN} -u root -p${MYSQLPASSWD} ${DATABASE} < requete.sql > ${WORKDIR}/export.csv 
+	${SQLITEBIN} ${WORKDIR}/${DATABASE}.sqlite3 < ${WORKDIR}/requete-sqlite3.sql > ${WORKDIR}/export.csv
 	if [[ $? != 0 ]]; then
 		echoerr "Error in exportSelectionToCSVFile, please check log file"
 		exit 255
 	fi
 
 	# Add headers
-	/bin/sed -i '1d' ${WORKDIR}/export.csv 
-	/bin/sed -i '1icis,cip13,admin,nom,pres,cip7' ${WORKDIR}/export.csv
+	# /bin/sed -i '1d' ${WORKDIR}/export.csv 
+	# /bin/sed -i '1icis,cip13,admin,nom,pres,cip7' ${WORKDIR}/export.csv
 
 }
 
@@ -144,6 +150,7 @@ transformToMeds()
 {
 	cd ${WORKDIR}
 
+	echo "Transforming CVS into Plist"
 	${PYTHONBIN} /usr/local/bin/cvs2plist.py ${WORKDIR}/export.csv ${WORKDIR}/Meds.plist dict
 
 	if [[ $? != 0 ]]; then
@@ -154,11 +161,13 @@ transformToMeds()
 
 compressMeds()
 {
+	echo "Compressing meds.plist"
 	/bin/tar zcf ${WORKDIR}/Meds.plist.tgz ${WORKDIR}/Meds.plist
 }
 
 sendMail()
 {
+	echo "Sending mail"
 	cat ${WORKDIR}/mail.txt | /bin/mail -s "Nouvelle version de Meds.plist" jacques@foucry.net < ${WORKDIR}/Meds.plist.tgz
 }
 
