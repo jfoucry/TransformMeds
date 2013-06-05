@@ -28,6 +28,7 @@ MYSQLPASSWD=ensi031X
 DATABASE=medocs
 CSVOUTPUT=export.csv
 PYTHONBIN=/usr/local/bin/python2.7
+RECIPIENTLIST=jacques@foucry.net
 
 echoerr()
 { 
@@ -86,6 +87,14 @@ checkFiles()
 		if [[ ${A} == ${B} ]]; then
 			echo "Removing ${BACKUPDIR}/${i}.${DATUM}"
 			/bin/rm ${BACKUPDIR}/${i}.${DATUM}
+			/bin/mail -s "No new Meds.plist" ${RECIPIENTLIST} <<EOF
+Salut Jacques,
+
+Il n'y a pas de nouvelle version de Meds.plist.
+
+Ton Script
+EOF
+			exit 0
 		fi
 	done
 }
@@ -168,7 +177,7 @@ compressMeds()
 sendMail()
 {
 	echo "Sending mail"
-	cat ${WORKDIR}/mail.txt | /bin/mail -s "Nouvelle version de Meds.plist" jacques@foucry.net < ${WORKDIR}/Meds.plist.tgz
+	cat ${WORKDIR}/mail.txt | /bin/mail -s "Nouvelle version de Meds.plist" ${RECIPIENTLIST} < ${WORKDIR}/Meds.plist.tgz
 }
 
 backupFiles
