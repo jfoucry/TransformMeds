@@ -81,21 +81,18 @@ checkFiles()
 		A=`/usr/bin/md5sum ${i}` | /bin/cut -f 1
 		B=`/usr/bin/md5sum ${BACKUPDIR}/${i}.${DATUM}` | /bin/cut -f 1 
 
-		echo ${A}
-		echo ${B}
-
-		if [[ ${A} == ${B} ]]; then
-			echo "Removing ${BACKUPDIR}/${i}.${DATUM}"
-			/bin/rm ${BACKUPDIR}/${i}.${DATUM}
-			/bin/mail -s "No new Meds.plist" ${RECIPIENTLIST} <<EOF
-Salut Jacques,
-
-Il n'y a pas de nouvelle version de Meds.plist.
-
-Ton Script
-EOF
-			exit 0
-		fi
+#		if [[ ${A} == ${B} ]]; then
+#			echo "Removing ${BACKUPDIR}/${i}.${DATUM}"
+#			/bin/rm ${BACKUPDIR}/${i}.${DATUM}
+#			/bin/mail -s "No new Meds.plist" ${RECIPIENTLIST} <<EOF
+#Salut Jacques,
+#
+#Il n'y a pas de nouvelle version de Meds.plist.
+#
+#Ton Script
+#EOF
+#			exit 0
+#		fi
 	done
 }
 
