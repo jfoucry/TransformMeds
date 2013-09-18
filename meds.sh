@@ -19,8 +19,8 @@
 #-------------------------------------------------------------------------- #
 
 
-WORKDIR=/home/jfoucry/AFM
-BACKUPDIR=/home/jfoucry/AFM/BACKUP
+WORKDIR=/perso/AFM
+BACKUPDIR=/perso/AFM/BACKUP
 DATUM=`/bin/date +"%F"`
 MYSQLBIN=/usr/bin/mysql
 SQLITEBIN=/usr/bin/sqlite3
@@ -58,6 +58,7 @@ backupFiles()
 
 downloadFiles()
 {
+	echo "Downloading files"
 	/usr/bin/wget -P ${WORKDIR} http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip
 
 	if [[ $? != 0 ]]; then
@@ -71,6 +72,47 @@ downloadFiles()
 		echoerr "Error in unziping file"
 		exit 255
 	fi
+}
+
+downloadSSFiles()
+{
+	echo "Downloading SS files..."
+	/usr/bin/wget -P ${WORKDIR} http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE
+
+	if [[ $? != 0 ]]; then
+		echoerr "Error in download SS files"
+		exit 255
+	fi
+
+	/usr/bin/arj e ${WORKDIR}/AFM.EXE ${WORKDIR} -u -y
+
+	if [[ $? != 0 && $? != 1 ]]; then
+		echoerr "Error in unarj SS files $?"
+		exit 255
+	fi
+
+	/bin/rm ${WORKDIR}/AFM.EXE
+}
+
+convertSSFiles()
+{
+
+	if [[ ! -x /usr/bin/dbf ]]; then
+		echoerr "Cannot find /usr/bin/dbf. Please fix it before continue"
+		exit 255
+	fi
+
+	cd ${WORKDIR}
+
+	for dbfile in `ls BDM_*.DBF`
+	do
+		file=`/bin/basename ${dbfile} .DBF`
+		echo "Converting ${dbfile}..."
+		/usr/bin/dbf --csv - ${dbfile} | /usr/bin/tail -n +2 > ${WORKDIR}/${file}.tmp
+		/usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
+		# /bin/rm ${WORKDIR}/${dbfile}
+		# /bin/rm ${WORKDIR}/${file}.tmp
+	done
 }
 
 checkFiles()
@@ -120,7 +162,7 @@ importCSVFiles()
 	${SQLITEBIN} ${WORKDIR}/${DATABASE}.sqlite3 < ${WORKDIR}/import_csv-sqlite3.sql
 
 	if [[ $? != 0 ]]; then
-		echo "Error during sql import, please check log file"
+		echoerr "Error during sql import, please check log file"
 		exit 255
 	fi
 }
@@ -179,12 +221,14 @@ sendMail()
 
 backupFiles
 downloadFiles
+downloadSSFiles
 checkFiles
 convertFiles
+convertSSFiles
 importCSVFiles
 exportSelectionToCSVFile
 transformToMeds
-compressMeds
+ompressMeds
 sendMail
 
 exit 0
