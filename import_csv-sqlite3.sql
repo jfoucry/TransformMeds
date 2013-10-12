@@ -2,7 +2,7 @@ drop table if exists CIS;
 drop table if exists CIS_CIP;
 drop table if exists COMPO;
 drop table if exists BDM_CIP;
-drop table if exists BDM_TRF;
+drop table if exists BDM_TFR;
 drop table if exists BDM_GG;
 drop table if exists BDM_TG;
 drop table if exists BDM_PRIX;
@@ -19,7 +19,7 @@ nb_unite VARCHAR(10), code_atc VARCHAR(10), classe_atc VARCHAR(77), code_eph VAR
 nom_long1 VARCHAR(114), nom_long2 VARCHAR(113), suivi VARCHAR(1), date_effet DATE, seuil_aler TINYINT, seuil_reje TINYINT, presc_rest VARCHAR(1),
 exceptions VARCHAR(1), type VARCHAR(2), sexe TINYINT, interact TINYINT, pih VARCHAR(2), pecp VARCHAR(2));
 
-create table BDM_TRF (cip VARCHAR(13), nom_court VARCHAR(50), code_grp TINYINT, nom_grp VARCHAR(124), code_atc VARCHAR(10), classe_atc VARCHAR(77),
+create table BDM_TFR (cip VARCHAR(13), nom_court VARCHAR(50), code_grp TINYINT, nom_grp VARCHAR(124), code_atc VARCHAR(10), classe_atc VARCHAR(77),
 pfht TINYINT, ppttc TINYINT, trf TINYINT, dt_deb DATE, dt_fin DATE);
 
 create table BDM_GG (cip VARCHAR(13), nom_court VARCHAR(50), code_grp TINYINT, nom_grp VARCHAR(124), code_atc VARCHAR(10), classe_atc VARCHAR(77),
@@ -28,7 +28,7 @@ dt_deb_afs DATE, dt_fin_afs DATE, debut_remb DATE, fin_remb DATE);
 create table BDM_TG (cip VARCHAR(13), nom_court VARCHAR(50), dt_effet DATE, gen_ind VARCHAR(1), code_grp TINYINT, nom_grp VARCHAR(124), 
 code_atc VARCHAR(10), classe_atc VARCHAR(77));
 
-create table BDM_PRIX (cip VARCHAR(13), CIP7 VARCHAR(7), prix_f TINYINT, prix_e TINYINT, fab_ht_e TINYINT, taux VARCHAR(3), date_appli DATE, date_jo DATE);
+create table BDM_PRIX (cip VARCHAR(13), CIP7 VARCHAR(7), prix_f TINYINT, prix_e TINYINT, fab_ht_e TINYINT, prix_ht_e TINYINT, taux VARCHAR(3), date_appli DATE, date_jo DATE);
 
 .separator \t
 
@@ -40,7 +40,7 @@ create table BDM_PRIX (cip VARCHAR(13), CIP7 VARCHAR(7), prix_f TINYINT, prix_e 
 
 .import 'BDM_CIP.csv' BDM_CIP
 
-.import 'BDM_TRF.csv' BDM_TRF
+.import 'BDM_TFR.csv' BDM_TFR
 
 .import 'BDM_GG.csv' BDM_GG
 
@@ -52,7 +52,7 @@ create index cis_idx on CIS (cis);
 create index cip_idx ON CIS_CIP (cis);
 create index compo_idx on COMPO (cis);
 create index bdm_cip_idx on BDM_CIP (cip);
-create index bdm_trf_idx on BDM_TRF (cip);
+create index bdm_tfr_idx on BDM_TFR (cip);
 create index bdm_gg_idx on BDM_GG (cip);
 create index bdm_tg_idx on BDM_TG (cip);
 create index bdm_prix_idx on BDM_PRIX (cip);
