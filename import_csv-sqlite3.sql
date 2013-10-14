@@ -7,6 +7,8 @@ drop table if exists BDM_GG;
 drop table if exists BDM_TG;
 drop table if exists BDM_PRIX;
 
+.echo OFF
+
 create table CIS (cis VARCHAR(8), nom_court VARCHAR(100), forme VARCHAR(50), admin_mode VARCHAR(60), status VARCHAR(25), type_procedure VARCHAR(25), etat_commercial VARCHAR(15), code_document VARCHAR(10), dummy VARCHAR(1));
 
 create table CIS_CIP (cis VARCHAR(8),cip7 VARCHAR(7), pres VARCHAR(50), status VARCHAR(25), declaration VARCHAR(50), date_declaration DATE, cip13 VARCHAR(13));
