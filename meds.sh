@@ -135,10 +135,10 @@ convertSSFiles()
     do
         file=`$BASENAME_CMD ${dbfile} .DBF`
         echo "Converting ${dbfile}..."
-        $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
-        /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
-        /bin/rm ${WORKDIR}/${dbfile}
-        /bin/rm ${WORKDIR}/${file}.tmp
+        $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | /usr/bin/tr ";" "\t" > ${WORKDIR}/${dbfile}.tmp
+        /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${dbfile}.csv
+        #/bin/rm ${WORKDIR}/${dbfile}
+        #/bin/rm ${WORKDIR}/${dbfile}.tmp
     done
 }
 
