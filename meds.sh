@@ -103,22 +103,23 @@ downloadFiles()
 
 downloadSSFiles()
 {
+    cd ${WORKDIR}
     echo "Downloading SS files..."
-    $DL_CMD -P ${WORKDIR} http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE
+    #$DL_CMD -P ${WORKDIR} http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE
 
-    if [[ $? != 0 ]]; then
-        echoerr "Error in download SS files"
-        exit 255
-    fi
+    # if [[ $? != 0 ]]; then
+       # echoerr "Error in download SS files"
+       # exit 255
+    # fi
 
-    $UNARJ e ${WORKDIR}/AFM.EXE ${WORKDIR} -u -y
+    $UNARJ e ${WORKDIR}/AFM.EXE
 
     if [[ $? != 0 && $? != 1 ]]; then
         echoerr "Error in unarj SS files $?"
         exit 255
     fi
 
-    /bin/rm ${WORKDIR}/AFM.EXE
+    # /bin/rm ${WORKDIR}/AFM.EXE
 }
 
 convertSSFiles()
@@ -246,8 +247,8 @@ sendMail()
     cat ${CURRENT_PATH}/mail.txt | $MAIL_CMD -s "Nouvelle version de Meds.plist" ${RECIPIENTLIST} < ${WORKDIR}/Meds.plist.tgz
 }
 
-backupFiles
-downloadFiles
+#backupFiles
+#downloadFiles
 downloadSSFiles
 checkFiles
 convertFiles
