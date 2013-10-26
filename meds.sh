@@ -27,7 +27,7 @@ DATABASE=medocs
 CSVOUTPUT=export.csv
 RECIPIENTLIST=jacques@foucry.net
 
-OS=`/usr/bin/uname -s`
+OS=`uname -s`
 
 if [[ $OS == "Darwin" ]]; then
     DL_CMD="/usr/local/bin/wget"
@@ -53,7 +53,10 @@ else
     PYTHONBIN="/usr/local/bin/python2.7"
     TAR_CMD="/bin/tar"
     MAIL_CMD="/bin/mail"
+    UNAME_CMD="/bin/uname"
 fi
+
+
 
 CURRENT_PATH=`echo $PWD`
 
@@ -133,13 +136,34 @@ convertSSFiles()
 
     for dbfile in `ls BDM_*.DBF`
     do
+        case $dbfile in
+            BDM_CIP.DBF)
+                NB_FIELD=34
+                ;;
+            BDM_TFR.DBF)
+                NB_FIELD=11
+                ;;
+            BDM_GG.DBF)
+                NB_FIELD=10
+                ;;
+            BDM_TG.DBF)
+                NB_FIELD=8
+                ;;
+            BDM_PRIX.DBF)
+                NB_FIELD=8
+                ;;
+        esac
+
+        echo $dbfile
+        echo $NB_FIELD
         file=`$BASENAME_CMD ${dbfile} .DBF`
         echo "Converting ${dbfile}..."
-        $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | /usr/bin/tr ";" "\t" | /bin/awk -F '\t' 'NF==34 '> ${WORKDIR}/${file}.tmp
+        $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | /usr/bin/tr ";" "\t" | /bin/awk -F '\t' 'NF==$NB_FIELD '> ${WORKDIR}/${file}.tmp
         /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
-        #/bin/rm ${WORKDIR}/${dbfile}
-        #/bin/rm ${WORKDIR}/${dbfile}.tmp
+        /bin/rm ${WORKDIR}/${dbfile}
+        /bin/rm ${WORKDIR}/${file}.tmp
     done
+    exit 1
 }
 
 checkFiles()
