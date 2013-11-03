@@ -27,7 +27,7 @@ DATABASE=medocs
 CSVOUTPUT=export.csv
 RECIPIENTLIST=jacques@foucry.net
 
-OS=`/usr/bin/uname -s`
+OS=`uname -s`
 
 if [[ $OS == "Darwin" ]]; then
     DL_CMD="/usr/local/bin/wget"
@@ -41,6 +41,8 @@ if [[ $OS == "Darwin" ]]; then
     PYTHONBIN="/usr/bin/python"
     TAR_CMD="/usr/bin/tar"
     MAIL_CMD="/usr/bin/mail"
+    AWK_CMD="/usr/local/bin/gawk"
+    SED_CMD="/usr/bin/sed"
 else
     DL_CMD="/usr/bin/wget"
     WORKDIR=/perso/AFM
@@ -53,9 +55,13 @@ else
     PYTHONBIN="/usr/local/bin/python2.7"
     TAR_CMD="/bin/tar"
     MAIL_CMD="/bin/mail"
+    UNAME_CMD="/bin/uname"
+    AWK_CMD="/bin/awk"
+    SED_CMD="/bin/sed"
 fi
 
-CURRENT_PATH=`echo $PWD`
+
+CURRENT_PATH=`dirname $0`
 
 echoerr()
 { 
@@ -105,12 +111,12 @@ downloadSSFiles()
 {
     cd ${WORKDIR}
     echo "Downloading SS files..."
-    #$DL_CMD -P ${WORKDIR} http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE
+    $DL_CMD -P ${WORKDIR} http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE
 
-    # if [[ $? != 0 ]]; then
-       # echoerr "Error in download SS files"
-       # exit 255
-    # fi
+    if [[ $? != 0 ]]; then
+        echoerr "Error in download SS files"
+        exit 255
+    fi
 
     $UNARJ e ${WORKDIR}/AFM.EXE
 
@@ -136,10 +142,26 @@ convertSSFiles()
     do
         file=`$BASENAME_CMD ${dbfile} .DBF`
         echo "Converting ${dbfile}..."
-        $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+        case $dbfile in
+            BDM_CIP.DBF)
+                $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | $AWK_CMD -F ';' 'NF==34' | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+                ;;
+            BDM_TFR.DBF)
+                $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | $AWK_CMD -F ';' 'NF==11' | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+                ;;
+            BDM_GG.DBF)
+                $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | $AWK_CMD -F ';' 'NF==10' | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+                ;;
+            BDM_TG.DBF)
+                $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | $AWK_CMD -F ';' 'NF==8' | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+                ;;
+            BDM_PRIX.DBF)
+                $DBF_CMD --separator ';' --csv - ${dbfile} | /usr/bin/tail -n +2 | $AWK_CMD -F ';' 'NF==9' | /usr/bin/tr ";" "\t" > ${WORKDIR}/${file}.tmp
+                ;;
+        esac
         /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
-        /bin/rm ${WORKDIR}/${dbfile}
-        /bin/rm ${WORKDIR}/${file}.tmp
+        #/bin/rm ${WORKDIR}/${dbfile}
+        #/bin/rm ${WORKDIR}/${file}.tmp
     done
 }
 
@@ -249,14 +271,14 @@ sendMail()
 
 #backupFiles
 #downloadFiles
-downloadSSFiles
-checkFiles
-convertFiles
+#downloadSSFiles
+#checkFiles
+#convertFiles
 convertSSFiles
 importCSVFiles
 exportSelectionToCSVFile
-transformToMeds
-compressMeds
-sendMail
+#transformToMeds
+#compressMeds
+#sendMail
 
 exit 0
