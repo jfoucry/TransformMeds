@@ -2,7 +2,12 @@
 	"folders":
 	[
 		{
+			"follow_symlinks": true,
 			"path": "/perso/sources/transformMeds"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/Users/jacques/Documents/Sources/transformMeds"
 		}
 	]
 }

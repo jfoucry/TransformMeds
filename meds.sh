@@ -195,8 +195,23 @@ convertFiles()
         filename=`$BASENAME_CMD ${i} .txt`
         echo "Converting $i into ${filename}.csv"
         #/usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} | /usr/bin/tr "\t" ";" > ${filename}.csv
-        /usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} > ${filename}.csv
+        /usr/bin/iconv -f ISO8859-15 -t UTF-8 ${i} > ${filename}.tmp
+
+        case $filename in
+            CIS)
+                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
+                # /bin/rm ${filename}.tmp 
+                ;;
+            CIS_CIP)
+                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==7' > ${filename}.csv
+                # /bin/rm ${filename}.tmp
+                ;;
+            COMPO)
+                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
+                # /bin/rm ${filename}.tmp
+        esac
     done
+
 }
 
 importCSVFiles()
