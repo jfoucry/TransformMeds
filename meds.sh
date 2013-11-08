@@ -259,6 +259,12 @@ exportSelectionToCSVFile()
 
 }
 
+addFakeMedocs()
+{
+    cd ${WORKDIR}
+    /bin/cat ${CURRENT_PATH}/fakeMedocs.txt >> ${WORKDIR}/export.csv
+}
+
 transformToMeds()
 {
     cd ${WORKDIR}
@@ -284,16 +290,17 @@ sendMail()
     cat ${CURRENT_PATH}/mail.txt | $MAIL_CMD -s "Nouvelle version de Meds.plist" ${RECIPIENTLIST} < ${WORKDIR}/Meds.plist.tgz
 }
 
-#backupFiles
-#downloadFiles
-#downloadSSFiles
-#checkFiles
-#convertFiles
+backupFiles
+downloadFiles
+downloadSSFiles
+checkFiles
+convertFiles
 convertSSFiles
 importCSVFiles
 exportSelectionToCSVFile
-#transformToMeds
-#compressMeds
-#sendMail
+addFakeMedocs
+transformToMeds
+compressMeds
+sendMail
 
 exit 0
