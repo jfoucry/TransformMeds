@@ -125,7 +125,7 @@ downloadSSFiles()
         exit 255
     fi
 
-    # /bin/rm ${WORKDIR}/AFM.EXE
+    /bin/rm ${WORKDIR}/AFM.EXE
 }
 
 convertSSFiles()
@@ -160,8 +160,8 @@ convertSSFiles()
                 ;;
         esac
         /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
-        #/bin/rm ${WORKDIR}/${dbfile}
-        #/bin/rm ${WORKDIR}/${file}.tmp
+        /bin/rm ${WORKDIR}/${dbfile}
+        /bin/rm ${WORKDIR}/${file}.tmp
     done
 }
 
@@ -200,15 +200,15 @@ convertFiles()
         case $filename in
             CIS)
                 cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
-                # /bin/rm ${filename}.tmp 
+                /bin/rm ${filename}.tmp 
                 ;;
             CIS_CIP)
                 cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==7' > ${filename}.csv
-                # /bin/rm ${filename}.tmp
+                /bin/rm ${filename}.tmp
                 ;;
             COMPO)
                 cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
-                # /bin/rm ${filename}.tmp
+                /bin/rm ${filename}.tmp
         esac
     done
 
@@ -234,6 +234,7 @@ importCSVFiles()
 
 exportSelectionToCSVFile()
 {
+	set -x
     cd ${WORKDIR}
 
     echo "Exporting query result to csv file"
@@ -241,8 +242,8 @@ exportSelectionToCSVFile()
         /bin/rm ${WORKDIR}/${CSVOUTPUT}
     fi
 
-    if [[ ! -f ${CURRENT_PATH}/requete.sql ]]; then
-        echoerr "Error, cannot find requete.sql file"
+    if [[ ! -f ${CURRENT_PATH}/requete-sqlite3.sql ]]; then
+        echoerr "Error, cannot find ${CURRENT_PATH}/requete.sql file"
         exit 255
     fi
 
