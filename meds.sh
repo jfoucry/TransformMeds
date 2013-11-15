@@ -125,7 +125,7 @@ downloadSSFiles()
         exit 255
     fi
 
-    # /bin/rm ${WORKDIR}/AFM.EXE
+    /bin/rm ${WORKDIR}/AFM.EXE
 }
 
 convertSSFiles()
@@ -160,8 +160,8 @@ convertSSFiles()
                 ;;
         esac
         /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
-        #/bin/rm ${WORKDIR}/${dbfile}
-        #/bin/rm ${WORKDIR}/${file}.tmp
+        /bin/rm ${WORKDIR}/${dbfile}
+        /bin/rm ${WORKDIR}/${file}.tmp
     done
 }
 
@@ -234,6 +234,7 @@ importCSVFiles()
 
 exportSelectionToCSVFile()
 {
+	set -x
     cd ${WORKDIR}
 
     echo "Exporting query result to csv file"
@@ -241,8 +242,8 @@ exportSelectionToCSVFile()
         /bin/rm ${WORKDIR}/${CSVOUTPUT}
     fi
 
-    if [[ ! -f ${CURRENT_PATH}/requete.sql ]]; then
-        echoerr "Error, cannot find requete.sql file"
+    if [[ ! -f ${CURRENT_PATH}/requete-sqlite3.sql ]]; then
+        echoerr "Error, cannot find ${CURRENT_PATH}/requete.sql file"
         exit 255
     fi
 
@@ -257,6 +258,12 @@ exportSelectionToCSVFile()
     # /bin/sed -i '1d' ${WORKDIR}/export.csv 
     # /bin/sed -i '1icis,cip13,admin,nom,pres,cip7' ${WORKDIR}/export.csv
 
+}
+
+addFakeMedocs()
+{
+    cd ${WORKDIR}
+    /bin/cat ${CURRENT_PATH}/fakeMedocs.txt >> ${WORKDIR}/export.csv
 }
 
 transformToMeds()
@@ -284,16 +291,19 @@ sendMail()
     cat ${CURRENT_PATH}/mail.txt | $MAIL_CMD -s "Nouvelle version de Meds.plist" ${RECIPIENTLIST} < ${WORKDIR}/Meds.plist.tgz
 }
 
-#backupFiles
-#downloadFiles
-#downloadSSFiles
-#checkFiles
-#convertFiles
+backupFiles
+downloadFiles
+downloadSSFiles
+checkFiles
+convertFiles
 convertSSFiles
+
+
 importCSVFiles
 exportSelectionToCSVFile
-#transformToMeds
-#compressMeds
-#sendMail
+addFakeMedocs
+transformToMeds
+compressMeds
+sendMail
 
 exit 0
