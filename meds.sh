@@ -199,15 +199,15 @@ convertFiles()
 
         case $filename in
             CIS)
-                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
+                /bin/cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
                 # /bin/rm ${filename}.tmp 
                 ;;
             CIS_CIP)
-                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==7' > ${filename}.csv
+                /bin/cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==7' > ${filename}.csv
                 # /bin/rm ${filename}.tmp
                 ;;
             COMPO)
-                cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
+                /bin/cat ${filename}.tmp | $AWK_CMD -F '\t' 'NF==9' > ${filename}.csv
                 # /bin/rm ${filename}.tmp
         esac
     done
