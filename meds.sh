@@ -41,7 +41,7 @@ if [[ $OS == "Darwin" ]]; then
     PYTHONBIN="/usr/bin/python"
     TAR_CMD="/usr/bin/tar"
     MAIL_CMD="/usr/bin/mail"
-    AWK_CMD="/usr/local/bin/gawk"
+    AWK_CMD="/usr/bin/awk"
     SED_CMD="/usr/bin/sed"
 else
     DL_CMD="/usr/bin/wget"
@@ -162,6 +162,7 @@ convertSSFiles()
         /usr/bin/iconv -t UTF-8 ${WORKDIR}/${file}.tmp > ${WORKDIR}/${file}.csv
         /bin/rm ${WORKDIR}/${dbfile}
         /bin/rm ${WORKDIR}/${file}.tmp
+        /bin/rm LISEZMOI.RTF
     done
 }
 
@@ -190,6 +191,7 @@ checkFiles()
 
 convertFiles()
 {
+    set -x
     cd ${WORKDIR}
     for i in `ls *.txt`; do
         filename=`$BASENAME_CMD ${i} .txt`
