@@ -8,3 +8,8 @@
 60000018,3400930000018,orale,"Médicament test 08","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",3000008
 60000019,3400930000019,orale,"Médicament test 09","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",3000009
 60000020,3400930000020,orale,"Médicament test 10","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",3000010
+00000000,3401070504783,-----,"Lancette BD Micro-Fine™ + 0,20 mm",7050478
+00000000,3401045915354,-----,"BD Microtainer®",4591535
+00000000,3401321104311,-----,"Aiguille BD Micro-Fine Ultra™ 4 mm",2110431
+00000000,3401021104543,-----,"Aiguille BD Micro-Fine Ultra™ 5 mm",2110454
+00000000,3401021104482,-----,"Aiguille BD Micro-Fine Ultra™ 8 mm",2110448
