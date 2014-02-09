@@ -27,6 +27,8 @@ DATABASE=medocs
 CSVOUTPUT=export.csv
 RECIPIENTLIST=jacques@foucry.net
 
+set -x
+
 OS=`uname -s`
 
 if [[ $OS == "Darwin" ]]; then
@@ -221,7 +223,7 @@ importCSVFiles()
     cd ${WORKDIR}
     echo "Importing CSV file into database"
     if [[ ! -f ${CURRENT_PATH}/import_csv-sqlite3.sql ]]; then
-        echoerr "Error in importCSVFiles, cannot find import_csv.sql file"
+        echoerr "Error in importCSVFiles, cannot find import_csv-sqlite3.sql file"
         exit 255
     fi
     
