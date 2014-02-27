@@ -13,16 +13,18 @@ int main(int argc, const char * argv[])
 
 	@autoreleasepool {
 	    
-	    if (argc == 0)
+		if (argc == 2) {
+			NSString *filePath = [NSString stringWithUTF8String:argv[1]];
+		}
+	    else if (argc >)
 	    {
-	    	printf("You must provide path to file to transform\n");
+	    	NSLog(@"To many argument supplied\n");
 	    	return 255;
-	    } else if (argc > 2)
-	    {
-	    	printf("Too much argument. You just need to provide path to file to transform\n");
+	    } 
+	    else {
+	    	NSLog(@"One argument expected\n");
 	    	return 255;
-	    }
-	    NSString *filePath = [NSString stringWithUTF8String:argv[1]];
+	    } 
 
 	    NSFileManager *fileManager = [NSFileManager defaultManager];
 
