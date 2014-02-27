@@ -27,6 +27,8 @@ DATABASE=medocs
 CSVOUTPUT=export.csv
 RECIPIENTLIST=jacques@foucry.net
 
+set -x
+
 OS=`uname -s`
 
 if [[ $OS == "Darwin" ]]; then
