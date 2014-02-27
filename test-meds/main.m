@@ -12,11 +12,11 @@ int main(int argc, const char * argv[])
 {
 
 	@autoreleasepool {
-	    
+	    NSString *filePath;
 		if (argc == 2) {
-			NSString *filePath = [NSString stringWithUTF8String:argv[1]];
+			filePath = [NSString stringWithUTF8String:argv[1]];
 		}
-	    else if (argc >)
+	    else if (argc >2)
 	    {
 	    	NSLog(@"To many argument supplied\n");
 	    	return 255;
