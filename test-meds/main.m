@@ -17,14 +17,14 @@ int main(int argc, const char * argv[])
 	    {
 	    	printf("You must provide path to file to transform\n");
 	    	return 255;
-	    } else if (argc > 1)
+	    } else if (argc > 2)
 	    {
 	    	printf("Too much argument. You just need to provide path to file to transform\n");
 	    	return 255;
 	    }
-	    NSString *filePath = [NSString stringWithUTF8Stringärgv[1]];
+	    NSString *filePath = [NSString stringWithUTF8String:argv[1]];
 
-	    NSFIleManager *fileManager = [NSFIleManager defaultManager];
+	    NSFileManager *fileManager = [NSFileManager defaultManager];
 
 	    if ([fileManager fileExistsAtPath:filePath])
 	    {
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
 			NSLog(@"End process");
 		}
 		else {
-			printf("Error, %@ not found\n", filePath);
+			printf("Error, %s not found\n", [filePath UTF8String]);
 			return 255;
 		}
 	}
