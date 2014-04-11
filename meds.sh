@@ -191,7 +191,7 @@ checkFiles()
 
 convertFiles()
 {
-    set -x
+    # set -x
     cd ${WORKDIR}
     for i in `ls *.txt`; do
         filename=`$BASENAME_CMD ${i} .txt`
@@ -218,10 +218,11 @@ convertFiles()
 
 importCSVFiles()
 {
+    # set -x
     cd ${WORKDIR}
     echo "Importing CSV file into database"
     if [[ ! -f ${CURRENT_PATH}/import_csv-sqlite3.sql ]]; then
-        echoerr "Error in importCSVFiles, cannot find import_csv-sqlite3.sql file"
+        echoerr "Error in importCSVFiles, cannot find ${CURRENT_PATH}/import_csv-sqlite3.sql file"
         exit 255
     fi
     

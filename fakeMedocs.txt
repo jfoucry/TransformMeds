@@ -13,3 +13,5 @@
 00000000,3401321104311,cutanée,"Aiguille BD Micro-Fine Ultra™ 4 mm","Aiguille",2110431
 00000000,3401021104543,cutanée,"Aiguille BD Micro-Fine Ultra™ 5 mm","Aiguille",2110454
 00000000,3401021104482,cutanée,"Aiguille BD Micro-Fine Ultra™ 8 mm","Aiguille",2110448
+00000000,3401094946767,cutanée,"Aiguille Insupen G31 X 5mm","Aiguille",9494676
+00000000,3401097592589,-------,"Bandelettes de test de la glycémie", "Bandelettes",9755925
