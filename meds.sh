@@ -30,11 +30,11 @@ RECIPIENTLIST=jacques@foucry.net
 set -x
 
 OS=`uname -s`
+WORKDIR=~/AFM
+BACKUPDIR=~/AFM/BACKUP
 
 if [[ $OS == "Darwin" ]]; then
     DL_CMD="/usr/local/bin/wget"
-    WORKDIR=/Users/jacques/AFM
-    BACKUPDIR=/Users/jacques/AFM/BACKUP
     UNARJ="/usr/local/bin/unarj"
     DBF_CMD="/usr/local/bin/dbf"
     CUT_CMD="/usr/bin/cut"
@@ -47,8 +47,6 @@ if [[ $OS == "Darwin" ]]; then
     SED_CMD="/usr/bin/sed"
 else
     DL_CMD="/usr/bin/wget"
-    WORKDIR=/perso/AFM
-    BACKUPDIR=/perso/AFM/BACKUP
     UNARJ="/usr/bin/arj"
     DBF_CMD="/usr/bin/dbf"
     CUT_CMD="/bin/cut"
