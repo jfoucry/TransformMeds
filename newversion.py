@@ -1,13 +1,15 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/env python
 
 from plistlib import *
 import os
 import requests
-#import zipfile
+import zipfile
 import sys
-import shutil
-from patoolib import util
-from . import basedir, datadir, needs_program, patool_cmd
+import subprocess
+
+def cmd_exists(cmd):
+    return subprocess.call("type " + cmd, shell=True, 
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 def downloadFile(url):
 	local_filename = url.split('/')[-1]
@@ -33,10 +35,9 @@ def writeMedsPlist():
 	writePlist(newDict, os.path.expanduser("/home/jfoucry/AFM/newMeds.plist"))
 
 # Download AMM file
-ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
-# unzip AMM file
-patool.extract_archive(os.path.expanduser("/home/jfoucry/fic_cis_cip.zip"), outdir="/tmp")
+#ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
 
+# unzip AMM file
 #fh = open(ammFile, 'rb')
 #z = zipfile.ZipFile(fh)
 #for name in z.namelist():
@@ -44,3 +45,7 @@ patool.extract_archive(os.path.expanduser("/home/jfoucry/fic_cis_cip.zip"), outd
 #	outfile.write('/tmp'+z.read(name))
 #	outfile.close
 #fh.close
+
+apath = cmd_exists("unarj")
+
+print apath
