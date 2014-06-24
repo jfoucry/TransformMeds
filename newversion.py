@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+# --------------------------------------------------------------------- #
+#																		#
+# Ré-éciture du script de traitement des bases de médicaments en 		#
+# python																#
+#																		#
+#-----------------------------------------------------------------------#
+
+
 from plistlib import *
 import os
 import requests
