@@ -60,8 +60,7 @@ else
     SED_CMD="/bin/sed"
 fi
 
-
-CURRENT_PATH=`dirname $0`
+CURRENT_PATH=$(cd "$(dirname "$0")"; pwd)
 
 echoerr()
 { 
