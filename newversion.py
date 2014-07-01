@@ -103,8 +103,6 @@ if cmd_exists("dbf"):
                 print db_prix
             except OSError as e:
                 writeOnSTDERR("Error is %s, exiting"% e.ValueError)
-sys.exit(0)
-
 # Create SQLite Database
 
 #con = sqlite3.connect(":memory:")
@@ -130,7 +128,7 @@ pfht TINYINT, ppttc TINYINT, trf TINYINT, dt_deb DATE, dt_fin DATE)
 # BDN_GG
 cursor.execute('''
     create table BDM_GG (cip VARCHAR(13), nom_court VARCHAR(50), code_grp TINYINT, nom_grp VARCHAR(124), code_atc VARCHAR(10), classe_atc VARCHAR(77),
-dt_deb_afs DATE, dt_fin_afs DATE, debut_remb DATE, fin_remb DATE))
+dt_deb_afs DATE, dt_fin_afs DATE, debut_remb DATE, fin_remb DATE)
 ''')
 
 # BDM_TG
@@ -147,6 +145,7 @@ date_appli DATE, date_jo DATE)
 con.commit()
 
 # insert into BDM_CIP
+print "Insert into BDM_CIP"
 for rec in db_cip:
     cip        = rec["CIP"]
     cip7       = rec["CIP7"]
@@ -185,17 +184,16 @@ for rec in db_cip:
 
     cursor.execute('''
         INSERT INTO BDM_CIP(cip,cip7, cip_ucd, nature,nom_court,indic_cond,debut_remb,fin_remb,code_liste, code_forme,forme,code_cplt,cplt_forme,dosage_sa,unite_sa,nb_unite,
-            code_atc,classe_atc,code_eph,classe_eph,labo,nom_long1,nom_long2,suivi,date_effet,seuil_aler,seuil_reje,presc_rest,exceptions,type,sexe,interact, pih,pecp)
+            code_atc,classe_atc,code_eph,classe_eph,labo,nom_long1,nom_long2,suivi,date_effet,seuil_aler,seuil_reje,presc_rest,exceptions,type,sexe,interact,pih,pecp)
         ''',
         {'cip':cip,'cip7':cip7,'cip_ucd':cip_ucd,'nature':nature,'nom_court':nom_court,'indic_cond':indic_cond,'debut_remb':debut_remb,'fin_remb':fin_remb,'code_liste':code_liste,
         'code_forme':code_forme,'forme':forme,'dosage_sa':dosage_sa,'unite_sa':unite_sa,'nb_unite':nb_unite,'code_atc':code_atc,'classe_atc':classe_atc,'code_eph':code_eph,
         'classe_eph':classe_eph,'labo':labo,'nom_long1':nom_long1,'nom_long2':nom_long2,'suivi':suivi,'date_effet':date_effet,'seuil_aler':seuil_aler,'seuil_reje':seuil_reje,
-        'presc_rest':presc_rest,'exceptions':exceptions,'type':type_m,'sexe':sexe,'interact':interact, 'pih':pih,'pecp':pecp}
+        'presc_rest':presc_rest,'exceptions':exceptions,'type':type_m,'sexe':sexe,'interact':interact,'pih':pih,'pecp':pecp}
         )
-    
-    print "Inserting cip %s"%(cip)
 
 # insert into BDM_TFR
+print "Insert into BDM_TFR"
 for rec in db_tfr:
     cip        = rec["CIP"]
     nom_court  = rec["NOM_COURT"]
@@ -213,9 +211,9 @@ for rec in db_tfr:
         INSERT INTO BDM_TFR(cip,nom_court,code_grp,nom_grp,code_atc,classe_atc,pfht,ppttc,dt_deb,dt_fin)''',
         {'cip':cip,'nom_court':nom_court,'code_grp':code_grp,'nom_grp':nom_grp,'code_atc':code_atc,'classe_atc':classe_atc,'pfht':pfht,'ppttc':ppttc,'dt_deb':dt_deb,'dt_fin':dt_fin}
         )
-    print "Inserting cip %s"%(cip)
 
 # insert into BDM_GG
+print "Insert into BDM_GG"
 for rec in db_gg:
     cip        = rec["CIP"]
     nom_court  = rec["NOM_COURT"]
@@ -234,9 +232,8 @@ for rec in db_gg:
         'debut_remb':debut_remb,'fin_remb':fin_remb}
         )
 
-print "Inserting cip %s"%(cip)
-
 # insert into BDM_TG
+print "Insert into BDM_TG"
 for rec in db_tg:
     cip        = rec["CIP"]
     nom_court  = rec["NOM_COURT"]
@@ -252,9 +249,9 @@ for rec in db_tg:
         VALUES(:cip,:nom_court,:dt_effet,:gen_ind,:code_grp,:nom_grp,:code_atc,:classe_atc)''',
         {'cip':cip, 'nom_court':nom_court,'dt_effet':dt_effet,'gen_ind':gen_ind,'code_grp':code_grp,'nom_grp':nom_grp,'code_atc':code_atc,'classe_atc':classe_atc})
 
-    print "Inserting cip %s"%(cip)
-
 # insert into BDM_PRIX
+print "Insert into BDM_PRIX"
+
 for rec in db_prix:
     cip        = rec["CIP"]
     cip7       = rec["CIP7"]
@@ -270,7 +267,6 @@ for rec in db_prix:
         INSERT INTO BDM_PRIX(cip, cip7, prix_f, prix_e, fab_ht_f,fab_ht_e,taux,date_appli,date_jo)''',
         {'cip':cip,'cip7':cip7,'prix_f':prix_f,'prix_e':prix_e,'fab_ht_f':fab_ht_f,'fab_ht_e':fab_ht_e,'taux':taux,'date_appli':date_appli,'date_jo':date_jo})
     
-    print "Inserting cip %s"%(cip)
 
 con.commit()
 con.close()
