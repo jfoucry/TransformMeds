@@ -183,8 +183,10 @@ for rec in db_cip:
     pecp       = rec["PECP"]
 
     cursor.execute('''
-        INSERT INTO BDM_CIP(cip,cip7, cip_ucd, nature,nom_court,indic_cond,debut_remb,fin_remb,code_liste, code_forme,forme,code_cplt,cplt_forme,dosage_sa,unite_sa,nb_unite,
+        INSERT INTO BDM_CIP(cip,cip7, cip_ucd,nature,nom_court,indic_cond,debut_remb,fin_remb,code_liste, code_forme,forme,code_cplt,cplt_forme,dosage_sa,unite_sa,nb_unite,
             code_atc,classe_atc,code_eph,classe_eph,labo,nom_long1,nom_long2,suivi,date_effet,seuil_aler,seuil_reje,presc_rest,exceptions,type,sexe,interact,pih,pecp)
+        VALUES(:cip,:cip7,:cip_ucd,:nature,:nom_court,:indic_cond,:debut_remb,:fin_remb,:code_liste,:code_forme,:forme,:code_cplt,:cplt_forme,:dosage_sa,:unite_sa.:nb_unite,
+            :code_atc,:classe_atc,:code_eph,:classe_eph,:labo,:nom_long1,:nom_long2,:suivi,:date_effet,:seuil_aler,:seuil_reje,:presc_rest,:exceptions.:type_m,:sexe,:interact,:pih,:pecp)
         ''',
         {'cip':cip,'cip7':cip7,'cip_ucd':cip_ucd,'nature':nature,'nom_court':nom_court,'indic_cond':indic_cond,'debut_remb':debut_remb,'fin_remb':fin_remb,'code_liste':code_liste,
         'code_forme':code_forme,'forme':forme,'dosage_sa':dosage_sa,'unite_sa':unite_sa,'nb_unite':nb_unite,'code_atc':code_atc,'classe_atc':classe_atc,'code_eph':code_eph,
@@ -227,7 +229,8 @@ for rec in db_gg:
     fin_remb   = rec["FIN_REMB"]
 
     cursor.execute('''
-        INSERT INTO BDM_GG(cip,nom_court,code_grp,nom_grp,code_atc,classe_atc, dt_deb_afs, dt_fin_afs, debut_remb,fin_remb)''',
+        INSERT INTO BDM_GG(cip,nom_court,code_grp,nom_grp,code_atc,classe_atc,dt_deb_afs, dt_fin_afs, debut_remb,fin_remb),
+        VALUES(:cip,:nom_court,:code_grp,:nom_grp,:code_atc,:classe_atc,dt_deb_afs,:dt_fin_afs,:debut_remb,:fin_remb)'''
         {'cip':cip,'nom_court':nom_court,'code_grp':code_grp,'nom_grp':nom_grp,'code_atc':code_atc,'classe_atc':classe_atc,'dt_deb_afs':dt_deb_afs,'dt_fin_afs':dt_fin_afs,
         'debut_remb':debut_remb,'fin_remb':fin_remb}
         )
@@ -264,7 +267,8 @@ for rec in db_prix:
     date_jo    = rec["DATE_JO"]
     
     cursor.execute('''
-        INSERT INTO BDM_PRIX(cip, cip7, prix_f, prix_e, fab_ht_f,fab_ht_e,taux,date_appli,date_jo)''',
+        INSERT INTO BDM_PRIX(cip, cip7, prix_f, prix_e, fab_ht_f,fab_ht_e,taux,date_appli,date_jo)
+        VALUES(:cip,:cip7,:prix_f,:prix_e,:fab_ht_f,:fab_ht_e,:taux.:date_appli,:date_jo)''',
         {'cip':cip,'cip7':cip7,'prix_f':prix_f,'prix_e':prix_e,'fab_ht_f':fab_ht_f,'fab_ht_e':fab_ht_e,'taux':taux,'date_appli':date_appli,'date_jo':date_jo})
     
 
