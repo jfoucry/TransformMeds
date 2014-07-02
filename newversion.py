@@ -112,6 +112,14 @@ def convert_to_utf8(sourceFileName, targetFileName):
 #                 writeOnSTDERR("Error is %s, exiting"% e.ValueError)
 # Create SQLite Database
 
+# writeMedsPlist()
+
+# sys.exit(0)
+try:
+    os.remove("meds.sqlite3")
+except OSError:
+    pass
+
 con = sqlite3.connect(":memory:")
 con = sqlite3.connect("meds.sqlite3")
 con.text_factory = str
@@ -433,14 +441,40 @@ con.commit()
 
 # Requête sql pour avoir les médicaments qui m'interessent
 
-# cursor.execute("select CIS_CIP.cis,CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7 from CIS_CIP,CIS where CIS.cis = CIS_CIP.cis and CIS.etat_commercial=\"Commercialisée\" and CIS.admin_mode IN (\"orale\", \"nasale\",\"cutanée\", \"sous-cutanée\",\"ophtalmique\",\"rectale\",\"vaginale\",\"transdermique\",\"voie buccale autre\",\"intracaverneuse\",\"oropharyngée\",\"buccogingivale\", \"inhalée\", \"intramusculaire\",\"sublinguale\")"
-#     )
+with con:
+    con.row_factory = sqlite3.Row
 
-# rows = cursor.fetchall()
+    cur = con.cursor()
 
+    print "Fetching medocs"
+    cur.execute("select CIS_CIP.cis,CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7 from CIS_CIP,CIS where CIS.cis = CIS_CIP.cis and CIS.etat_commercial=\"Commercialisée\" and CIS.admin_mode IN (\"orale\", \"nasale\",\"cutanée\", \"sous-cutanée\",\"ophtalmique\",\"rectale\",\"vaginale\",\"transdermique\",\"voie buccale autre\",\"intracaverneuse\",\"oropharyngée\",\"buccogingivale\", \"inhalée\", \"intramusculaire\",\"sublinguale\")"
+        )
 
+    rows = cur.fetchall()
 
+    # for row in rows:
+    #     print "%s %s %s"% (row["cis"], row["nom_court"], row["admin_mode"])
+
+data = []
+for row in rows:
+    aDict = {"cis":row["cis"].decode("utf8"),"cip13":row["cip13"].decode("utf8"),"cip7":row["cip7"].decode("utf8"),"admin_mode":row["admin_mode"].decode("utf8"),"nom_court":row["nom_court"].decode("utf8"),"pres":row["pres"].decode("utf8")}
+    data.append(aDict)
+    # print aDict
+
+newDict = {}
+for aDict in data:
+    key = aDict["cip7"].decode("utf8")
+    newDict[key] = aDict
+
+# print newDict
+# writePlist(newDict,"toto.plist")
 # for row in rows:
 #    print row
+#     for aDict in myArray:
+#         key = aDict["cip7"]
+#         #print key
+#         newDict[key] = aDict
 
+#     #print newDict
+writePlist(newDict, os.path.expanduser("./toto.plist"))
 con.close()
