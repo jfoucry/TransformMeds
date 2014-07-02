@@ -19,6 +19,7 @@ import csv
 from dbfpy import dbf
 import sqlite3
 import shutil
+import codecs
 
 def cmd_exists(cmd):
     return subprocess.call("type " + cmd, shell=True, 
@@ -50,54 +51,15 @@ def writeMedsPlist():
 def writeOnSTDERR(msg):
         sys.stderr.write(msg)
 
-def convert_to_utf8(filename):
-    # gather the encodings you think that the file may be
-    # encoded inside a tuple
-    encodings = ('iso-8859')
- 
-    # try to open the file and exit if some IOError occurs
-    try:
-        f = open(filename, 'r').read()
-    except Exception:
-        sys.exit(1)
- 
-    # now start iterating in our encodings tuple and try to
-    # decode the file
-    for enc in encodings:
-        try:
-            # try to decode the file with the first encoding
-            # from the tuple.
-            # if it succeeds then it will reach break, so we
-            # will be out of the loop (something we want on
-            # success).
-            # the data variable will hold our decoded text
-            data = f.decode(enc)
-            break
-        except Exception:
-            # if the first encoding fail, then with the continue
-            # keyword will start again with the second encoding
-            # from the tuple an so on.... until it succeeds.
-            # if for some reason it reaches the last encoding of
-            # our tuple without success, then exit the program.
-            if enc == encodings[-1]:
-                sys.exit(1)
-            continue
- 
-    # now get the absolute path of our filename and append .bak
-    # to the end of it (for our backup file)
-    fpath = os.path.abspath(filename)
-    newfilename = fpath + '.bak'
-    # and make our backup file with shutil
-    shutil.copy(filename, newfilename)
- 
-    # and at last convert it to utf-8
-    f = open(filename, 'w')
-    try:
-        f.write(data.encode('utf-8'))
-    except Exception, e:
-        print e
-    finally:
-        f.close()
+def convert_to_utf8(sourceFileName, targetFileName):
+    BLOCKSIZE = 1048576 # or some other, desired size in bytes
+    with codecs.open(sourceFileName, "r", "ISO-8859-15") as sourceFile:
+        with codecs.open(targetFileName, "w", "utf-8") as targetFile:
+            while True:
+                contents = sourceFile.read(BLOCKSIZE)
+                if not contents:
+                    break
+                targetFile.write(contents)
 
 # Download AMM file
 # ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
@@ -155,11 +117,13 @@ con = sqlite3.connect("meds.sqlite3")
 con.text_factory = str
 cursor = con.cursor()
 
+cursor.execute('''PRAGMA encoding = "UTF-8"''')
+
 # Create tables
 
 cursor.execute('''
     create table CIS (cis VARCHAR(8), nom_court VARCHAR(100), forme VARCHAR(50), admin_mode VARCHAR(60), status VARCHAR(25), 
-type_procedure VARCHAR(25), etat_commercial VARCHAR(15), code_document VARCHAR(10), dummy VARCHAR(1))
+type_procedure VARCHAR(25), etat_commercial VARCHAR(20), code_document VARCHAR(10), dummy VARCHAR(1))
 ''')
 
 cursor.execute('''
@@ -388,33 +352,37 @@ cursor.execute('''
 #         'taux':taux,
 #         'date_appli':date_appli,
 #         'date_jo':date_jo})
-
+# cusor.execute('''create index bdm_cip_idx on BDM_CIP (cip)''')
+# cusor.execute('''create index bdm_tfr_idx on BDM_TFR (cip)''')
+# cusor.execute('''create index bdm_gg_idx on BDM_GG (cip)''')
+# cusor.execute('''create index bdm_tg_idx on BDM_TG (cip)''')
+# cusor.execute('''create index bdm_prix_idx on BDM_PRIX (cip)''')
 # con.commit()
 
 # Insert CSV files into database
 
-# convert_to_utf8("CIS.txt")
-# convert_to_utf8("CIS_CIP.txt")
+convert_to_utf8("CIS.txt", "CIS.csv")
+convert_to_utf8("CIS_CIP.txt", "CIS_CIP.csv")
 
-print "Insert CIS.txt into CIS table"
+print "Insert CIS.csv into CIS table"
 
 columns = ['cis', 'nom_court', 'forme', 'admin_mode', 'status', 'type_procedure', 'etat_commercial', 'code_document', 'dummy']
 
 data = []
-with open("CIS.txt") as f:
+with open("CIS.csv") as f:
     for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
         data.append(row)    
 
 for rec in data:
-    cis             = rec["cis"]
-    nom_court       = rec["nom_court"]
-    forme           = rec["forme"]
-    admin_mode      = rec["admin_mode"]
-    status          = rec["status"]
-    type_procedure  = rec["type_procedure"]
-    etat_commercial = rec["etat_commercial"]
-    code_document   = rec["code_document"]
-    dummy           = rec["dummy"]
+    cis             = rec[u"cis"]
+    nom_court       = rec[u"nom_court"]
+    forme           = rec[u"forme"]
+    admin_mode      = rec[u"admin_mode"]
+    status          = rec[u"status"]
+    type_procedure  = rec[u"type_procedure"]
+    etat_commercial = rec[u"etat_commercial"]
+    code_document   = rec[u"code_document"]
+    dummy           = rec[u"dummy"]
 
     cursor.execute('''
         INSERT INTO CIS(cis,nom_court,forme,admin_mode,status,type_procedure,etat_commercial,code_document,dummy)
@@ -429,14 +397,15 @@ for rec in data:
         'code_document':code_document,
         'dummy':dummy})
 
+cursor.execute('''create index cis_idx on CIS (cis)''')
 con.commit()
 
-print "Insert CIS_CIP.txt into CIS_CIP table"
+print "Insert CIS_CIP.csv into CIS_CIP table"
 
 columns = ['cis','cip7', 'pres', 'status', 'declaration', 'date_declaration', 'cip13']
 
 data = []
-with open("CIS_CIP.txt") as f:
+with open("CIS_CIP.csv") as f:
     for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
         data.append(row)
 
@@ -459,7 +428,7 @@ for rec in data:
         'declaration':declaration,
         'date_declaration':date_declaration,
         'cip13':cip13})
-
+cursor.execute('''create index cip_idx ON CIS_CIP (cis)''')
 con.commit()
 
 # Requête sql pour avoir les médicaments qui m'interessent
