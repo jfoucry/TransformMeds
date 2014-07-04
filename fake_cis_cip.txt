@@ -8,10 +8,10 @@
 60000018,3000008,orale,"plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",,,,3400930000018
 60000019,3000009,orale,"plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",,,,3400930000019
 60000020,3000010,orale,"plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)",,,,3400930000020
-00000000,7050478,cutanée,"Lancette",,,,3401070504783
-00000000,4591535,cutanée,"Lancette",,,,3401045915354
-00000000,2110431,cutanée,"Aiguille",,,,3401321104311
-00000000,2110454,cutanée,"Aiguille",,,,3401021104543
-00000000,2110448,cutanée,"Aiguille",,,,3401021104482
-00000000,9494676,cutanée,"Aiguille",,,,3401094946767
-00000000,-------,,"Bandelettes",,,,3401097592589
+60000021,7050478,cutanée,"Lancette",,,,3401070504783
+60000022,4591535,cutanée,"Lancette",,,,3401045915354
+60000023,2110431,cutanée,"Aiguille",,,,3401321104311
+60000024,2110454,cutanée,"Aiguille",,,,3401021104543
+60000025,2110448,cutanée,"Aiguille",,,,3401021104482
+60000026,9494676,cutanée,"Aiguille",,,,3401094946767
+60000027,9759258,,"Bandelettes",,,,3401097592589
