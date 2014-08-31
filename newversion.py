@@ -420,7 +420,6 @@ with open("CIS.csv") as f:
 
 with open("fake_cis.txt") as f:
 	for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
-		print row
 		data.append(row)
 
 for rec in data:
