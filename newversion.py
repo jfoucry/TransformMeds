@@ -102,7 +102,7 @@ fh = open(ammFile, 'rb')
 z = zipfile.ZipFile(fh)
 for name in z.namelist():
 	outfile = open(name, 'wb')
-	outfile.write('/tmp'+z.read(name))
+	outfile.write(z.read(name))
 	outfile.close
 fh.close
 
@@ -116,33 +116,33 @@ if cmd_exists("unarj"):
 		writeOnSTDERR("Error in %s. exiting" % (cmd_string))
 		sys.exit(1)
 
-if cmd_exists("dbf"):
-	for file in os.listdir('.'):
-		if file == "BDM_CIP.DBF":
-			try:
-				db_cip = dbf.Dbf("BDM_CIP.DBF")
-			except OSError as e:
-				writeOnSTDERR("Error is %s, exiting"% e.ValueError)
-		elif file == "BDM_TFR.DBF":
-			try:
-				db_tfr = dbf.Dbf("BDM_TFR.DBF")
-			except OSError as e:
-				writeOnSTDERR("Error is %s, exiting"% e.ValueError)
-		elif file == "BDM_GG.DBF":
-			try:
-				db_gg = dbf.Dbf("BDM_GG.DBF")
-			except OSError as e:
-				writeOnSTDERR("Error is %s, exiting"% e.ValueError)
-		elif file == "BDM_TG.DBF":
-			try:
-				db_tg = dbf.Dbf("BDM_TG.DBF")
-			except OSError as e:
-				writeOnSTDERR("Error in %s, exiting"% e.ValueError)
-		elif file == "BDM_PRIX.DBF":
-			try:
-				db_prix = dbf.Dbf("BDM_PRIX.DBF")
-			except OSError as e:
-				writeOnSTDERR("Error is %s, exiting"% e.ValueError)
+# if cmd_exists("dbf"):
+for file in os.listdir('.'):
+	if file == "BDM_CIP.DBF":
+		try:
+			db_cip = dbf.Dbf("BDM_CIP.DBF")
+		except OSError as e:
+			writeOnSTDERR("Error is %s, exiting"% e.ValueError)
+	elif file == "BDM_TFR.DBF":
+		try:
+			db_tfr = dbf.Dbf("BDM_TFR.DBF")
+		except OSError as e:
+			writeOnSTDERR("Error is %s, exiting"% e.ValueError)
+	elif file == "BDM_GG.DBF":
+		try:
+			db_gg = dbf.Dbf("BDM_GG.DBF")
+		except OSError as e:
+			writeOnSTDERR("Error is %s, exiting"% e.ValueError)
+	elif file == "BDM_TG.DBF":
+		try:
+			db_tg = dbf.Dbf("BDM_TG.DBF")
+		except OSError as e:
+			writeOnSTDERR("Error in %s, exiting"% e.ValueError)
+	elif file == "BDM_PRIX.DBF":
+		try:
+			db_prix = dbf.Dbf("BDM_PRIX.DBF")
+		except OSError as e:
+			writeOnSTDERR("Error is %s, exiting"% e.ValueError)
 # Create SQLite Database
 
 try:
@@ -241,7 +241,7 @@ for rec in db_cip:
 	seuil_reje = rec["SEUIL_REJE"]
 	presc_rest = rec["PRESC_REST"]
 	exceptions = rec["EXCEPTIONS"]
-	type         = rec["TYPE"]
+	type       = rec["TYPE"]
 	sexe       = rec["SEXE"]
 	interact   = rec["INTERACT"]
 	pih        = rec["PIH"]
@@ -512,4 +512,4 @@ for aDict in data:
 print "Writing result file"
 writePlist(newDict, os.path.expanduser("./toto.plist"))
 
-cleanning()
+# cleanning()
