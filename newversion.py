@@ -90,9 +90,6 @@ def cleanning():
 	except OSError:
 		pass
 
-# cleanning()
-# sys.exit(0)
-
 # Download AMM file
 ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
 secuFile = downloadFile("http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE")
@@ -116,7 +113,6 @@ if cmd_exists("unarj"):
 		writeOnSTDERR("Error in %s. exiting" % (cmd_string))
 		sys.exit(1)
 
-# if cmd_exists("dbf"):
 for file in os.listdir('.'):
 	if file == "BDM_CIP.DBF":
 		try:
@@ -155,8 +151,8 @@ try:
 except OSError:
 	pass
 	
-# con = sqlite3.connect(":memory:")
-con = sqlite3.connect("meds.sqlite3")
+con = sqlite3.connect(":memory:")
+# con = sqlite3.connect("meds.sqlite3")
 con.text_factory = str
 cursor = con.cursor()
 
@@ -512,4 +508,4 @@ for aDict in data:
 print "Writing result file"
 writePlist(newDict, os.path.expanduser("./toto.plist"))
 
-# cleanning()
+cleanning()
