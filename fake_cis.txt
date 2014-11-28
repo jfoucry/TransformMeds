@@ -7,7 +7,7 @@
 60000017,"Médicament test 07","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)","orale","NA","NC","Commercialisée","Inconnu","dummy"
 60000018,"Médicament test 08","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)","orale","NA","NC","Commercialisée","Inconnu","dummy"
 60000019,"Médicament test 09","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)","orale","NA","NC","Commercialisée","Inconnu","dummy"
-60000020,"Médicament test 20","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)","orale","NA","NC","Commercialisée","Inconnu","dummy"
+60000020,"Médicament test 10","plaquette(s) thermoformée(s) PVC PVDC aluminium de 10 comprimé(s)","orale","NA","NC","Commercialisée","Inconnu","dummy"
 60000021,"Lancette BD Micro-Fine™ + 0,20 mm","Lancette","cutanée","NA","NC","Commercialisée","Inconnu","dummy"
 60000022,"Lancette Aiguille BD Microtainer®","Lancette",cutanée,"NA","NC","Commercialisée","Inconnu","dummy"
 60000023,"Aiguille BD Micro-Fine Ultra™ 4 mm","Aiguille","cutanée","NA","NC","Commercialisée","Inconnu","dummy"
