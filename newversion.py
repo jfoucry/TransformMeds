@@ -151,8 +151,8 @@ try:
 except OSError:
 	pass
 	
-# con = sqlite3.connect(":memory:")
-con = sqlite3.connect("meds.sqlite3")
+con = sqlite3.connect(":memory:")
+# con = sqlite3.connect("meds.sqlite3")
 con.text_factory = str
 cursor = con.cursor()
 
