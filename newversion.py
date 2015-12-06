@@ -90,7 +90,24 @@ def cleanning():
 	except OSError:
 		pass
 
+	try:
+		os.remove("android.db")
+	except OSError:
+		pass
+
+	try:
+		os.remove("meds.sqlit3")
+	except OSError:
+		pass
+
+	try:
+		os.remove("meds.db")
+	except OSError:
+		pass
 # Download AMM file
+
+cleanning()
+
 ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
 secuFile = downloadFile("http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE")
 
@@ -151,8 +168,8 @@ try:
 except OSError:
 	pass
 	
-con = sqlite3.connect(":memory:")
-# con = sqlite3.connect("meds.sqlite3")
+#con = sqlite3.connect(":memory:")
+con = sqlite3.connect("meds.sqlite3")
 con.text_factory = str
 cursor = con.cursor()
 
@@ -496,9 +513,13 @@ with con:
 con.close()
 
 data = []
+datalist = []
 for row in rows:
 	aDict = {"cis":row["cis"].decode("utf8"),"cip13":row["cip13"].decode("utf8"),"cip7":row["cip7"].decode("utf8"),"admin_mode":row["admin_mode"].decode("utf8"),"nom_court":row["nom_court"].decode("utf8"),"pres":row["pres"].decode("utf8")}
 	data.append(aDict)
+	# ligne = [row["cis"].decode("utf8"),row["cip13"].decode("utf8"),row["cip7"].decode("utf8"),row["admin_mode"].decode("utf8"),row["nom_court"].decode("utf8"),row["pres"].decode("utf8")]
+	ligne = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],row["nom_court"],row["pres"]]
+	datalist.append(ligne)
 
 newDict = {}
 for aDict in data:
@@ -506,6 +527,54 @@ for aDict in data:
 	newDict[key] = aDict
 
 print "Writing result file"
-writePlist(newDict, os.path.expanduser("./toto.plist"))
+writePlist(newDict, os.path.expanduser("./meds.plist"))
 
-cleanning()
+# Create new database for Android project
+
+connexion = sqlite3.connect(r"android.db")
+connexion.text_factory = str
+cursor = connexion.cursor()
+
+cursor.execute('''PRAGMA encoding = "UTF-8"''')
+
+# Create tables
+
+cursor.execute('''
+	create table MEDOCS (cis VARCHAR(8), cip13 VARCHAR(13), cip7 VARCHAR(7), mode_administration VARCHAR(60), 
+nom VARCHAR(100), presentation VARCHAR(50))
+''')
+
+for rec in datalist:
+	cis = rec[0]
+	cip13 = rec[1]
+	cip7 = rec[2]
+	mode_administration = rec[3]
+	nom = rec[4]
+	presentation = rec[5]
+
+	if len(cip7) == 0:
+		cip7 = cip13[5:12]
+		print cip7
+
+	cursor.execute('''
+		INSERT INTO MEDOCS(cis, cip7, cip13, mode_administration, nom, presentation)
+		VALUES(:cis,:cip7,:cip13,:mode_administration,:nom,:presentation)''',
+		{'cis':cis,
+		'cip7':cip7,
+		'cip13':cip13,
+		'mode_administration':mode_administration,
+		'nom':nom,
+		'presentation':presentation})
+
+cursor.execute('''create index cip13_idx ON MEDOCS (cip13)''')
+cursor.execute('''create index cip7_idx ON MEDOCS (cip7)''')
+
+connexion.commit
+
+csvfile = "myfile.csv"
+with open(csvfile, "w") as output:
+	writer = csv.writer(output, lineterminator='\n', delimiter=";", doublequote=True)
+	for val in datalist:
+		writer.writerow([val])
+
+# cleanning()
