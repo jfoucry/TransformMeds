@@ -1,8 +1,0 @@
-Hello Jacques,
-
-Je heureux de t'envoyer la nouvelle version du fichier Meds.plist.
-
-Il ne reste plus qu'à le passer à la moulinette de TransFormMeds pour
-faire une nouvelle release de PilStock.
-
-Ton script meds.sh
