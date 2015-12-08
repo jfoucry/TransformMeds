@@ -540,11 +540,21 @@ cursor.execute('''PRAGMA encoding = "UTF-8"''')
 # Create tables
 
 cursor.execute('''
-	create table MEDOCS (cis VARCHAR(8), cip13 VARCHAR(13), cip7 VARCHAR(7), mode_administration VARCHAR(60), 
+	create table medicaments (_id INTEGER PRIMARY KEY, cis VARCHAR(8), cip13 VARCHAR(13), cip7 VARCHAR(7), mode_administration VARCHAR(60), 
 nom VARCHAR(100), presentation VARCHAR(50))
 ''')
 
+cursor.execute('''
+	create table android_metadata (locale TEXT)
+''')
+cursor.execute('''
+	INSERT INTO android_metadata(locale) VALUES ('en-US') ''')
+
+i = 0
+
 for rec in datalist:
+	i+=1
+	_id = i
 	cis = rec[0]
 	cip13 = rec[1]
 	cip7 = rec[2]
@@ -554,20 +564,19 @@ for rec in datalist:
 
 	if len(cip7) == 0:
 		cip7 = cip13[5:12]
-		print cip7
 
 	cursor.execute('''
-		INSERT INTO MEDOCS(cis, cip7, cip13, mode_administration, nom, presentation)
-		VALUES(:cis,:cip7,:cip13,:mode_administration,:nom,:presentation)''',
-		{'cis':cis,
-		'cip7':cip7,
+		INSERT INTO medicaments(_id, cis, cip13, cip7, mode_administration, nom, presentation)
+		VALUES(:_id,:cis,:cip13,:cip7,:mode_administration,:nom,:presentation)''',
+		{'_id':_id,
+		'cis':cis,
 		'cip13':cip13,
+		'cip7':cip7,
 		'mode_administration':mode_administration,
 		'nom':nom,
 		'presentation':presentation})
 
-cursor.execute('''create index cip13_idx ON MEDOCS (cip13)''')
-cursor.execute('''create index cip7_idx ON MEDOCS (cip7)''')
+cursor.execute('''create index cip13_idx ON medicaments (cip13)''')
 
 connexion.commit
 
