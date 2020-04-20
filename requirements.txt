@@ -1,0 +1,9 @@
+requests
+zip-files
+subproc
+super-csv
+dbf
+sqlite3-plus
+#osutil
+simple-codecs
+glob2
