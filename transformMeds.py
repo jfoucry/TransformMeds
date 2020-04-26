@@ -16,10 +16,11 @@ import zipfile
 import sys
 import subproc
 import csv
-import dbf
+#import dbf
 import sqlite3
 import shutil
 import codecs
+import re
 import glob
 
 def cmd_exists(cmd):
@@ -27,7 +28,8 @@ def cmd_exists(cmd):
         stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 def downloadFile(url):
-    local_filename = url.split('/')[-1]
+    dummy = url.split('?')[-1]
+    local_filename = dummy.split('=')[1]
     file = requests.get(url, stream=True)
     print ("Downloading %s" % local_filename)
     with open(local_filename, 'wb') as f:
@@ -55,54 +57,10 @@ def cleanning():
     for filePath in glob.glob("CIS*"):
         if os.path.isfile(filePath):
             os.remove(filePath)
-
-    try:
-        os.remove("COMPO.txt")
-    except OSError:
-        pass
-
-    for filePath in glob.glob("BDM_*.DBF"):
-        if os.path.isfile(filePath):
-            os.remove(filePath)
-
-    try:
-        os.remove("LISEZMOI.RTF")
-    except OSError:
-        pass
-    try:
-        os.remove("fic_cis_cip.zip")
-    except OSError:
-        pass
-    try:
-        os.remove("AFM.EXE")
-    except OSError:
-        pass
-
     try:
         os.remove("android.db")
     except OSError:
         pass
-
-    try:
-        os.remove("meds.sqlit3")
-    except OSError:
-        pass
-
-    try:
-        os.remove("meds.db")
-    except OSError:
-        pass
-# Download AMM file
-def main():
-    # cleanning()
-
-    # ammFile = downloadFile("http://agence-prd.ansm.sante.fr/php/ecodex/telecharger/fic_cis_cip.zip")
-    # secuFile = downloadFile("http://www.codage.ext.cnamts.fr/f_mediam/fo/bdm/AFM.EXE")
-
-    # http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_bdpm.txt
-    # http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_CIP_bdpm.txt
-    # http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt
-    # http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt
 
     try:
         os.remove("meds.sqlite3")
@@ -110,9 +68,24 @@ def main():
         pass
 
     try:
-        os.remove("toto.plist")
+        os.remove("myfile.csv")
     except OSError:
         pass
+
+def truncate_string(string):
+    parts = string.split("-",1)[0]
+    dummy = parts.replace("équivalant à", "⇔")
+
+    return (re.sub(' +', ' ', dummy).rstrip(', '))
+
+
+def main():
+    cleanning()
+
+    cis_file = downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_bdpm.txt")
+    cis_cip_file = downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_CIP_bdpm.txt")
+    cis_gener_file = downloadFile ("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt")
+    cis_compo_file= downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt")
 
     connexion = sqlite3.connect("meds.sqlite3")
     connexion.text_factory = str
@@ -134,9 +107,10 @@ def main():
 
     # Insert CSV files into database
 
-    convert_to_utf8("CIS.txt", "CIS.csv")
-    convert_to_utf8("CIS_CIP.txt", "CIS_CIP.csv")
+    convert_to_utf8("CIS_bdpm.txt", "CIS.csv")
+    convert_to_utf8("CIS_CIP_bdpm.txt", "CIS_CIP.csv")
     convert_to_utf8("CIS_GENER_bdpm.txt", "CIS_GENER.csv")
+    convert_to_utf8("CIS_COMPO_bdpm.txt", "CIS_COMPO.csv")
 
     print ("Insert CIS.csv into CIS table")
 
@@ -147,9 +121,9 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
-    with open("fake_cis.txt") as f:
-        for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
-            data.append(row)
+    #with open("fake_cis.txt") as f:
+    #    for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
+    #        data.append(row)
 
     for rec in data:
         cis             = rec[u"cis"]
@@ -179,9 +153,9 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
-    with open("fake_cis_cip.txt") as f:
-        for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
-            data.append(row)
+    #with open("fake_cis_cip.txt") as f:
+    #    for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
+    #        data.append(row)
 
     for rec in data:
         cis              = rec['cis']
@@ -206,7 +180,8 @@ def main():
             data.append(row)
 
     for rec in data:
-        libelle_group   = rec['libelle_group']
+        dummy           = rec['libelle_group']
+        libelle_group = truncate_string(dummy)
         cis             = rec['cis']
 
         cursor.execute("INSERT INTO CIS_GENER(libelle_group,cis)\
@@ -300,8 +275,6 @@ def main():
             'nom':nom,\
             'presentation':presentation,\
             'libelle_group':libelle_group})
-
-        print ("count == %s" % i)
 
     cursor.execute("create index cip13_idx ON medicaments (cip13)")
 

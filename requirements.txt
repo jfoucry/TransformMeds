@@ -1,9 +1,5 @@
 requests
 zip-files
 subproc
-super-csv
-dbf
-sqlite3-plus
-#osutil
-simple-codecs
+sqlite3
 glob2
