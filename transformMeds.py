@@ -1,22 +1,12 @@
 #!/usr/bin/env python3.7
 # -*-coding:utf-8 -*-
 
-# --------------------------------------------------------------------- #
-#                                                                       #
-# Ré-écriture du script de traitement des bases de médicaments en       #
-# python                                                                #
-#                                                                       #
-#-----------------------------------------------------------------------#
-
-
 
 import os
 import requests
 import zipfile
 import sys
-import subproc
 import csv
-#import dbf
 import sqlite3
 import shutil
 import codecs
@@ -58,12 +48,17 @@ def cleanning():
         if os.path.isfile(filePath):
             os.remove(filePath)
     try:
-        os.remove("android.db")
+        os.remove("complete.db")
     except OSError:
         pass
 
     try:
-        os.remove("meds.sqlite3")
+        os.remove("drugs.db")
+    except OSError:
+        pass
+
+    try:
+        os.remove("all-drugs.sqlite3")
     except OSError:
         pass
 
@@ -87,7 +82,7 @@ def main():
     cis_gener_file = downloadFile ("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt")
     cis_compo_file= downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt")
 
-    connexion = sqlite3.connect("meds.sqlite3")
+    connexion = sqlite3.connect("all-drugs.sqlite3")
     connexion.text_factory = str
     cursor = connexion.cursor()
 
@@ -192,35 +187,19 @@ def main():
     cursor.execute("create index gener_idx ON CIS_GENER (cis)")
     connexion.commit()
 
-    # Requête sql pour avoir les médicaments qui m'interessent
+    # sauvegarde de la base complète pour tests
 
     with connexion:
         connexion.row_factory = sqlite3.Row
 
         cursor = connexion.cursor()
+        print("Complete Database")
 
-        print ("Fetching medocs")
         cursor.execute("select CIS_CIP.cis,\
         CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7, CIS_GENER.libelle_group from CIS_CIP,CIS,CIS_GENER \
         where CIS.cis = CIS_CIP.cis \
         and CIS.cis = CIS_GENER.cis \
         and CIS.etat_commercial=\"Commercialisée\"\
-        and CIS.admin_mode IN (\
-        \"orale\",\
-        \"nasale\",\
-        \"cutanée\",\
-        \"sous-cutanée\",\
-        \"ophtalmique\",\
-        \"rectale\",\
-        \"vaginale\",\
-        \"transdermique\",\
-        \"voie buccale autre\",\
-        \"intracaverneuse\",\
-        \"oropharyngée\",\
-        \"buccogingivale\",\
-        \"inhalée\",\
-        \"intramusculaire\",\
-        \"sublinguale\")\
         ")
 
         rows = cursor.fetchall()
@@ -234,7 +213,7 @@ def main():
 
     # Create new database for Android project
 
-    connexion = sqlite3.connect(r"android.db")
+    connexion = sqlite3.connect(r"complete.db")
     connexion.text_factory = str
     cursor = connexion.cursor()
 
@@ -281,13 +260,104 @@ def main():
     connexion.commit()
     connexion.close()
 
+    # Requête sql pour avoir les médicaments qui m'interessent
+
+    connexion = sqlite3.connect("all-drugs.sqlite3")
+    with connexion:
+        connexion.row_factory = sqlite3.Row
+
+        cursor = connexion.cursor()
+
+        print ("Fetching medocs")
+        cursor.execute("select CIS_CIP.cis,\
+        CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7, CIS_GENER.libelle_group from CIS_CIP,CIS,CIS_GENER \
+        where CIS.cis = CIS_CIP.cis \
+        and CIS.cis = CIS_GENER.cis \
+        and CIS.etat_commercial=\"Commercialisée\"\
+        and CIS.admin_mode IN (\
+        \"orale\",\
+        \"nasale\",\
+        \"cutanée\",\
+        \"sous-cutanée\",\
+        \"ophtalmique\",\
+        \"rectale\",\
+        \"vaginale\",\
+        \"transdermique\",\
+        \"voie buccale autre\",\
+        \"intracaverneuse\",\
+        \"oropharyngée\",\
+        \"buccogingivale\",\
+        \"inhalée\",\
+        \"intramusculaire\",\
+        \"sublinguale\")\
+        ")
+
+        rows = cursor.fetchall()
+    connexion.close()
+
+    data = []
+    datalist = []
+    for row in rows:
+        line = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],row["nom_court"],row["pres"], row["libelle_group"]]
+        datalist.append(line)
+
+    # Create new database for Android project
+
+    connexion = sqlite3.connect(r"drugs.db")
+    connexion.text_factory = str
+    cursor = connexion.cursor()
+
+    cursor.execute("PRAGMA encoding = 'UTF-8'")
+
+    # Create tables
+
+    cursor.execute("create table drugs (_id INTEGER PRIMARY KEY, cis VARCHAR(8), \
+        cip13 VARCHAR(13), cip7 VARCHAR(7), administration_mode VARCHAR(60),\
+        name VARCHAR(100), presentation VARCHAR(50), label_group VARCHAR(255))")
+
+    cursor.execute("create table android_metadata (locale TEXT)")
+    cursor.execute("INSERT INTO android_metadata(locale) VALUES ('en-US')")
+
+    i = 0
+
+    for rec in datalist:
+        i+=1
+        _id = i
+        cis = rec[0]
+        cip13 = rec[1]
+        cip7 = rec[2]
+        administration_mode = rec[3]
+        name = rec[4]
+        presentation = rec[5]
+        label_group = rec[6]
+
+        if len(cip7) == 0:
+            cip7 = cip13[5:12]
+
+        cursor.execute("INSERT INTO drugs(_id, cis, cip13, cip7, administration_mode, name, presentation, label_group) \
+            VALUES(:_id,:cis,:cip13,:cip7,:administration_mode,:name,:presentation,:label_group)",\
+            {'_id':_id,\
+            'cis':cis,\
+            'cip13':cip13,\
+            'cip7':cip7,\
+            'administration_mode':administration_mode,\
+            'name':name,\
+            'presentation':presentation,\
+            'label_group':label_group})
+
+    cursor.execute("create index cip13_idx ON drugs (cip13)")
+
+    connexion.commit()
+    connexion.close()
+
     csvfile = "myfile.csv"
     with open(csvfile, "w") as output:
         writer = csv.writer(output, lineterminator='\n', delimiter=";", doublequote=True)
         for val in datalist:
             writer.writerow([val])
 
-    # cleanning
+    #cleanning()
+
 
 if __name__ == '__main__':
     main()
