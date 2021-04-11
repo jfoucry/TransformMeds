@@ -1,0 +1,1 @@
+SELECT * FROM medicaments where cip13 = 3400936441460
