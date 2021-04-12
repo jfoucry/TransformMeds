@@ -14,4 +14,3 @@
 60000024,"Aiguille BD Micro-Fine Ultra™ 5 mm","Aiguille","cutanée","NA","NC","Commercialisée","Inconnu","dummy"
 60000025,"Aiguille BD Micro-Fine Ultra™ 8 mm","Aiguille","cutanée","NA","NC","Commercialisée","Inconnu","dummy"
 60000026,"Aiguille Insupen G31 X 5mm","Aiguille","cutanée","NA","NC","Commercialisée","Inconnu","dummy"
-60000027,"Bandelettes de test de la glycémie", "Bandelettes","NA","NC","Commercialisée","Inconnu","dummy"

@@ -116,9 +116,9 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
-    #with open("fake_cis.txt") as f:
-    #    for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
-    #        data.append(row)
+    with open("fake_cis.txt") as f:
+        for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
+            data.append(row)
 
     for rec in data:
         cis             = rec[u"cis"]
@@ -148,9 +148,9 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
-    #with open("fake_cis_cip.txt") as f:
-    #    for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
-    #        data.append(row)
+    with open("fake_cis_cip.txt") as f:
+        for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
+            data.append(row)
 
     for rec in data:
         cis              = rec['cis']
@@ -158,6 +158,7 @@ def main():
         pres             = rec["pres"]
         cip13            = rec["cip13"]
 
+        print(rec)
         cursor.execute("INSERT INTO CIS_CIP(cis,cip7,pres,cip13)\
             VALUES(:cis,:cip7,:pres,:cip13)",\
             {'cis':cis,\
@@ -172,6 +173,10 @@ def main():
     data = []
     with open("CIS_GENER.csv") as f:
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
+            data.append(row)
+
+    with open("fake_gener.txt") as f:
+        for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
             data.append(row)
 
     for rec in data:

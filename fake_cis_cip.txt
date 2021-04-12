@@ -14,5 +14,3 @@
 60000024,2110454,"Aiguille",Présentation active,Déclaration de commercialisation,01/01/1900,3401021104543
 60000025,2110448,"Aiguille",Présentation active,Déclaration de commercialisation,01/01/1900,3401021104482
 60000026,9494676,"Aiguille",Présentation active,Déclaration de commercialisation,01/01/1900,3401094946767
-60000027,9759258,"Bandelettes",Présentation active,Déclaration de commercialisation,01/01/1900,3401097592589
- No newline at end of file
