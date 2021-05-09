@@ -158,7 +158,6 @@ def main():
         pres             = rec["pres"]
         cip13            = rec["cip13"]
 
-        print(rec)
         cursor.execute("INSERT INTO CIS_CIP(cis,cip7,pres,cip13)\
             VALUES(:cis,:cip7,:pres,:cip13)",\
             {'cis':cis,\
@@ -200,13 +199,14 @@ def main():
         cursor = connexion.cursor()
         print("Complete Database")
 
-        cursor.execute("select CIS_CIP.cis,\
-        CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7, CIS_GENER.libelle_group from CIS_CIP,CIS,CIS_GENER \
-        where CIS.cis = CIS_CIP.cis \
-        and CIS.cis = CIS_GENER.cis \
-        and CIS.etat_commercial=\"Commercialisée\"\
-        ")
-
+        cursor.execute("SELECT CIS_CIP.cis,\
+                       CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7,\
+                       CIS_GENER.libelle_group FROM CIS\
+                       INNER JOIN CIS_CIP\
+                       ON CIS.cis = CIS_CIP.cis\
+                       LEFT JOIN CIS_GENER\
+                       ON CIS.cis = CIS_GENER.cis\
+                       WHERE CIS.etat_commercial=\"Commercialisée\"")
         rows = cursor.fetchall()
     connexion.close()
 
@@ -236,6 +236,7 @@ def main():
     i = 0
 
     for rec in datalist:
+        print(rec)
         i+=1
         _id = i
         cis = rec[0]
@@ -274,28 +275,31 @@ def main():
         cursor = connexion.cursor()
 
         print ("Fetching medocs")
-        cursor.execute("select CIS_CIP.cis,\
-        CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7, CIS_GENER.libelle_group from CIS_CIP,CIS,CIS_GENER \
-        where CIS.cis = CIS_CIP.cis \
-        and CIS.cis = CIS_GENER.cis \
-        and CIS.etat_commercial=\"Commercialisée\"\
-        and CIS.admin_mode IN (\
-        \"orale\",\
-        \"nasale\",\
-        \"cutanée\",\
-        \"sous-cutanée\",\
-        \"ophtalmique\",\
-        \"rectale\",\
-        \"vaginale\",\
-        \"transdermique\",\
-        \"voie buccale autre\",\
-        \"intracaverneuse\",\
-        \"oropharyngée\",\
-        \"buccogingivale\",\
-        \"inhalée\",\
-        \"intramusculaire\",\
-        \"sublinguale\")\
-        ")
+        cursor.execute("SELECT CIS_CIP.cis,\
+            CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7,\
+            CIS_GENER.libelle_group FROM CIS\
+            INNER JOIN CIS_CIP\
+            ON CIS.cis = CIS_CIP.cis\
+            LEFT JOIN CIS_GENER\
+            ON CIS.cis = CIS_GENER.cis\
+            WHERE CIS.etat_commercial=\"Commercialisée\"\
+            and CIS.admin_mode IN (\
+            \"orale\",\
+            \"nasale\",\
+            \"cutanée\",\
+            \"sous-cutanée\",\
+            \"ophtalmique\",\
+            \"rectale\",\
+            \"vaginale\",\
+            \"transdermique\",\
+            \"voie buccale autre\",\
+            \"intracaverneuse\",\
+            \"oropharyngée\",\
+            \"buccogingivale\",\
+            \"inhalée\",\
+            \"intramusculaire\",\
+            \"sublinguale\")\
+            ")
 
         rows = cursor.fetchall()
     connexion.close()
