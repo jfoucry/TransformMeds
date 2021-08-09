@@ -1,5 +1,0 @@
-requests
-zip-files
-subproc
-sqlite3
-glob2

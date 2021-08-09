@@ -73,6 +73,7 @@ def truncate_string(string):
 
     return (re.sub(' +', ' ', dummy).rstrip(', '))
 
+def create_all_drugs():
 
 def main():
     cleanning()
