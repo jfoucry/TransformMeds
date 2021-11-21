@@ -73,8 +73,6 @@ def truncate_string(string):
 
     return (re.sub(' +', ' ', dummy).rstrip(', '))
 
-def create_all_drugs():
-
 def main():
     cleanning()
 
@@ -237,7 +235,6 @@ def main():
     i = 0
 
     for rec in datalist:
-        print(rec)
         i+=1
         _id = i
         cis = rec[0]
