@@ -1,2 +1,11 @@
 *.db
 *.sqlite3
+CIS.csv
+CIS_CIP.csv
+CIS_CIP_bdpm.txt
+CIS_COMPO.csv
+CIS_COMPO_bdpm.txt
+CIS_GENER.csv
+CIS_GENER_bdpm.txt
+CIS_bdpm.txt
+myfile.csv
