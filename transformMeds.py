@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python
 # -*-coding:utf-8 -*-
 
 
@@ -58,7 +58,7 @@ def cleanning():
         pass
 
     try:
-        os.remove("all-drugs.sqlite3")
+        os.remove("all-drugs.db")
     except OSError:
         pass
 
@@ -81,7 +81,7 @@ def main():
     cis_gener_file = downloadFile ("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt")
     cis_compo_file= downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt")
 
-    connexion = sqlite3.connect("all-drugs.sqlite3")
+    connexion = sqlite3.connect("all-drugs.db")
     connexion.text_factory = str
     cursor = connexion.cursor()
 
@@ -115,6 +115,7 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
+    # add fake cis record for tests
     with open("fake_cis.txt") as f:
         for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
             data.append(row)
@@ -147,6 +148,7 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
+    # Add fake cis_cip record for tests
     with open("fake_cis_cip.txt") as f:
         for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
             data.append(row)
@@ -173,6 +175,7 @@ def main():
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
             data.append(row)
 
+    # Add fake gis_gener for tests
     with open("fake_gener.txt") as f:
         for row in csv.DictReader(f, fieldnames=columns,delimiter=','):
             data.append(row)
@@ -266,7 +269,7 @@ def main():
 
     # Requête sql pour avoir les médicaments qui m'interessent
 
-    connexion = sqlite3.connect("all-drugs.sqlite3")
+    connexion = sqlite3.connect("all-drugs.db")
     with connexion:
         connexion.row_factory = sqlite3.Row
 
