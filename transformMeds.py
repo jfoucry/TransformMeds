@@ -68,10 +68,13 @@ def cleanning():
         pass
 
 def truncate_string(string):
-    parts = string.split("-",1)[0]
-    dummy = parts.replace("équivalant à", "⇔")
+    w = re.sub(' +', ' ', string)
+    x = w.split(" équivalent ",1)[0]
+    y = x.split(" équivalant ",1)[0]
+    z = y.split(", ",1)[0]
 
-    return (re.sub(' +', ' ', dummy).rstrip(', '))
+    return (z.split("- ",1)[0])
+
 
 def main():
     cleanning()
@@ -136,7 +139,7 @@ def main():
             'etat_commercial':etat_commercial\
             })
 
-    cursor.execute('''create index cis_idx on CIS (cis)''')
+    cursor.execute("create index cis_idx on CIS (cis)")
     connexion.commit()
 
     print ("Insert CIS_CIP.csv into CIS_CIP table")
@@ -169,6 +172,7 @@ def main():
     cursor.execute("create index cip_idx ON CIS_CIP (cis)")
     connexion.commit()
 
+    print ("Insert CIS_GENER.csv into CIS_GENER table")
     columns = ['id_group', 'libelle_group', 'cis', 'dummy_num1', 'dummy_num2']
     data = []
     with open("CIS_GENER.csv") as f:
