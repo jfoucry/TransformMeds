@@ -72,8 +72,9 @@ def truncate_string(string):
     x = w.split(" équivalent ",1)[0]
     y = x.split(" équivalant ",1)[0]
     z = y.split(", ",1)[0]
+    
+    return (z.split("- ",1)[0])
 
-    return (re.sub(' +', ' ', dummy).rstrip(', '))
 
 def main():
     cleanning()
@@ -172,6 +173,7 @@ def main():
     connexion.commit()
 
     columns = ['id_group', 'libelle_group', 'cis', 'gener_type', 'dummy_num2']
+
     data = []
     with open("CIS_GENER.csv") as f:
         for row in csv.DictReader(f, fieldnames=columns, delimiter='\t'):
