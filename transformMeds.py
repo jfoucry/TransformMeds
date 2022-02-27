@@ -221,9 +221,8 @@ def main():
     data = []
     datalist = []
     for row in rows:
-        ligne =
-        [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],row["nom_court"],row["pres"],
-         row["libelle_group"], row["gener_type"]
+        ligne = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],\
+                 row["nom_court"],row["pres"],row["libelle_group"],row["gener_type"]]
         datalist.append(ligne)
 
     # Create new database for Android project
@@ -291,7 +290,7 @@ def main():
         print ("Fetching medocs")
         cursor.execute("SELECT CIS_CIP.cis,\
             CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7,\
-            CIS_GENER.libelle_group CIS_GENER.gener_type FROM CIS\
+            CIS_GENER.libelle_group, CIS_GENER.gener_type FROM CIS\
             INNER JOIN CIS_CIP\
             ON CIS.cis = CIS_CIP.cis\
             LEFT JOIN CIS_GENER\
@@ -321,8 +320,8 @@ def main():
     data = []
     datalist = []
     for row in rows:
-        line =
-         [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],row["nom_court"],row["pres"],row["libelle_group"],row["gener_type"]
+        line = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],\
+                row["nom_court"], row["pres"],row["libelle_group"],row["gener_type"]]
         datalist.append(line)
 
     # Create new database for Android project
