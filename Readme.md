@@ -14,3 +14,6 @@ The result, `drugs.db` have to be include into the asset directory of the
 Pilldroid project.
 
 Note: It a very bad python but for now, it works :-)
+
+Create a virtualenv:
+
