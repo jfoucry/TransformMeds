@@ -99,7 +99,7 @@ def main():
     cursor.execute("create table CIS_CIP (cis VARCHAR(8),cip7 VARCHAR(7), pres VARCHAR(50), cip13 VARCHAR(13))")
 
     # CIS_GENER
-    cursor.execute("create table CIS_GENER (libelle_group VARCHAR(255), cis VARCHAR(8), gener_type INTEGER)")
+    cursor.execute("create table CIS_GENER (libelle_group VARCHAR(255), cis VARCHAR(8), generic_type INTEGER)")
     connexion.commit()
 
     # Insert CSV files into database
@@ -172,7 +172,7 @@ def main():
     cursor.execute("create index cip_idx ON CIS_CIP (cis)")
     connexion.commit()
 
-    columns = ['id_group', 'libelle_group', 'cis', 'gener_type', 'dummy_num2']
+    columns = ['id_group', 'libelle_group', 'cis', 'generic_type', 'dummy_num2']
 
     data = []
     with open("CIS_GENER.csv") as f:
@@ -188,13 +188,13 @@ def main():
         dummy           = rec['libelle_group']
         libelle_group   = truncate_string(dummy)
         cis             = rec['cis']
-        gener_type      = rec['gener_type']
+        generic_type      = rec['generic_type']
 
-        cursor.execute("INSERT INTO CIS_GENER(libelle_group,cis,gener_type)\
-            VALUES(:libelle_group,:cis,:gener_type)",\
+        cursor.execute("INSERT INTO CIS_GENER(libelle_group,cis,generic_type)\
+            VALUES(:libelle_group,:cis,:generic_type)",\
             {'libelle_group':libelle_group,\
             'cis':cis,\
-             "gener_type":gener_type})
+             "generic_type":generic_type})
 
     cursor.execute("create index gener_idx ON CIS_GENER (cis)")
     connexion.commit()
@@ -209,7 +209,7 @@ def main():
 
         cursor.execute("SELECT CIS_CIP.cis,\
                        CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7,\
-                       CIS_GENER.libelle_group,CIS_GENER.gener_type FROM CIS\
+                       CIS_GENER.libelle_group,CIS_GENER.generic_type FROM CIS\
                        INNER JOIN CIS_CIP\
                        ON CIS.cis = CIS_CIP.cis\
                        LEFT JOIN CIS_GENER\
@@ -222,7 +222,7 @@ def main():
     datalist = []
     for row in rows:
         ligne = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],\
-                 row["nom_court"],row["pres"],row["libelle_group"],row["gener_type"]]
+                 row["nom_court"],row["pres"],row["libelle_group"],row["generic_type"]]
         datalist.append(ligne)
 
     # Create new database for Android project
@@ -238,7 +238,7 @@ def main():
     cursor.execute("create table medicaments (_id INTEGER PRIMARY KEY, cis VARCHAR(8), \
         cip13 VARCHAR(13), cip7 VARCHAR(7), mode_administration VARCHAR(60),\
         nom VARCHAR(100), presentation VARCHAR(50), libelle_group VARCHAR(255),\
-                   gener_type INTEGER)")
+                   generic_type INTEGER)")
 
     cursor.execute("create table android_metadata (locale TEXT)")
     cursor.execute("INSERT INTO android_metadata(locale) VALUES ('en-US')")
@@ -255,15 +255,15 @@ def main():
         nom = rec[4]
         presentation = rec[5]
         libelle_group = rec[6]
-        gener_type = rec[7]
+        generic_type = rec[7]
 
         if len(cip7) == 0:
             cip7 = cip13[5:12]
 
         cursor.execute("INSERT INTO medicaments(_id, cis, cip13, cip7,\
-        mode_administration, nom, presentation, libelle_group, gener_type) \
+        mode_administration, nom, presentation, libelle_group, generic_type) \
             VALUES(:_id,:cis,:cip13,:cip7,:mode_administration,:nom,:presentation,\
-                       :libelle_group, :gener_type)",\
+                       :libelle_group, :generic_type)",\
             {'_id':_id,\
             'cis':cis,\
             'cip13':cip13,\
@@ -272,7 +272,7 @@ def main():
             'nom':nom,\
             'presentation':presentation,\
             'libelle_group':libelle_group,\
-            'gener_type':gener_type})
+            'generic_type':generic_type})
 
     cursor.execute("create index cip13_idx ON medicaments (cip13)")
 
@@ -290,7 +290,7 @@ def main():
         print ("Fetching medocs")
         cursor.execute("SELECT CIS_CIP.cis,\
             CIS_CIP.cip13,CIS.admin_mode,CIS.nom_court,CIS_CIP.pres,CIS_CIP.cip7,\
-            CIS_GENER.libelle_group, CIS_GENER.gener_type FROM CIS\
+            CIS_GENER.libelle_group, CIS_GENER.generic_type FROM CIS\
             INNER JOIN CIS_CIP\
             ON CIS.cis = CIS_CIP.cis\
             LEFT JOIN CIS_GENER\
@@ -321,7 +321,7 @@ def main():
     datalist = []
     for row in rows:
         line = [row["cis"],row["cip13"],row["cip7"],row["admin_mode"],\
-                row["nom_court"], row["pres"],row["libelle_group"],row["gener_type"]]
+                row["nom_court"], row["pres"],row["libelle_group"],row["generic_type"]]
         datalist.append(line)
 
     # Create new database for Android project
@@ -334,10 +334,10 @@ def main():
 
     # Create tables
 
-    cursor.execute("create table drugs (_id INTEGER PRIMARY KEY, cis VARCHAR(8), \
-        cip13 VARCHAR(13), cip7 VARCHAR(7), administration_mode VARCHAR(60),\
-        name VARCHAR(100), presentation VARCHAR(50), label_group VARCHAR(255),\
-                   gener_type INTEGER)")
+    cursor.execute("create table drugs (_id INTEGER PRIMARY KEY NOT NULL, cis TEXT, \
+        cip13 TEXT, cip7 TEXT, administration_mode TEXT,\
+        name TEXT, presentation TEXT, label_group TEXT,\
+                   generic_type INTEGER)")
 
     cursor.execute("create table android_metadata (locale TEXT)")
     cursor.execute("INSERT INTO android_metadata(locale) VALUES ('en-US')")
@@ -354,14 +354,14 @@ def main():
         name = rec[4]
         presentation = rec[5]
         label_group = rec[6]
-        gener_type = rec[7]
+        generic_type = rec[7]
 
         if len(cip7) == 0:
             cip7 = cip13[5:12]
 
         cursor.execute("INSERT INTO drugs(_id, cis, cip13, cip7,\
-        administration_mode, name, presentation, label_group, gener_type) \
-            VALUES(:_id,:cis,:cip13,:cip7,:administration_mode,:name,:presentation,:label_group,:gener_type)",\
+        administration_mode, name, presentation, label_group, generic_type) \
+            VALUES(:_id,:cis,:cip13,:cip7,:administration_mode,:name,:presentation,:label_group,:generic_type)",\
             {'_id':_id,\
             'cis':cis,\
             'cip13':cip13,\
@@ -370,9 +370,9 @@ def main():
             'name':name,\
             'presentation':presentation,\
             'label_group':label_group,\
-            'gener_type':gener_type})
+            'generic_type':generic_type})
 
-    cursor.execute("create index cip13_idx ON drugs (cip13)")
+    #cursor.execute("create index cip13_idx ON drugs (cip13)")
 
     connexion.commit()
     connexion.close()
