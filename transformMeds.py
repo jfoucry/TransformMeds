@@ -79,10 +79,10 @@ def truncate_string(string):
 def main():
     cleanning()
 
-    cis_file = downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_bdpm.txt")
-    cis_cip_file = downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_CIP_bdpm.txt")
-    cis_gener_file = downloadFile ("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt")
-    cis_compo_file= downloadFile("http://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt")
+    cis_file = downloadFile("https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_bdpm.txt")
+    cis_cip_file = downloadFile("https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_CIP_bdpm.txt")
+    cis_gener_file = downloadFile ("https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_GENER_bdpm.txt")
+    cis_compo_file= downloadFile("https://base-donnees-publique.medicaments.gouv.fr/telechargement.php?fichier=CIS_COMPO_bdpm.txt")
 
     connexion = sqlite3.connect("all-drugs.db")
     connexion.text_factory = str
@@ -93,13 +93,17 @@ def main():
     # Create tables
 
     # CIS
-    cursor.execute("create table CIS (cis VARCHAR(8), nom_court VARCHAR(100), forme VARCHAR(50), admin_mode VARCHAR(60), etat_commercial VARCHAR(25))")
+    #cursor.execute("create table CIS (cis VARCHAR(8), nom_court VARCHAR(100), forme VARCHAR(50), admin_mode VARCHAR(60), etat_commercial VARCHAR(25))")
+    cursor.execute("create table CIS (cis TEXT, nom_court TEXT, forme \
+                   TEXT, admin_mode TEXT, etat_commercial TEXT)")
 
     # CIS_CIP
-    cursor.execute("create table CIS_CIP (cis VARCHAR(8),cip7 VARCHAR(7), pres VARCHAR(50), cip13 VARCHAR(13))")
+    #cursor.execute("create table CIS_CIP (cis VARCHAR(8),cip7 VARCHAR(7), pres VARCHAR(50), cip13 VARCHAR(13))")
+    cursor.execute("create table CIS_CIP (cis TEXT,cip7 TEXT, pres TEXT, cip13 TEXT)")
 
     # CIS_GENER
-    cursor.execute("create table CIS_GENER (libelle_group VARCHAR(255), cis VARCHAR(8), generic_type INTEGER)")
+    #cursor.execute("create table CIS_GENER (libelle_group VARCHAR(255), cis VARCHAR(8), generic_type INTEGER)")
+    cursor.execute("create table CIS_GENER (libelle_group TEXT, cis TEXT, generic_type INTEGER)")
     connexion.commit()
 
     # Insert CSV files into database
@@ -214,7 +218,7 @@ def main():
                        ON CIS.cis = CIS_CIP.cis\
                        LEFT JOIN CIS_GENER\
                        ON CIS.cis = CIS_GENER.cis\
-                       WHERE CIS.etat_commercial=\"Commercialisée\"")
+                       WHERE CIS.etat_commercial=\'Commercialisée\'")
         rows = cursor.fetchall()
     connexion.close()
 
@@ -235,9 +239,9 @@ def main():
 
     # Create tables
 
-    cursor.execute("create table medicaments (_id INTEGER PRIMARY KEY, cis VARCHAR(8), \
-        cip13 VARCHAR(13), cip7 VARCHAR(7), mode_administration VARCHAR(60),\
-        nom VARCHAR(100), presentation VARCHAR(50), libelle_group VARCHAR(255),\
+    cursor.execute("create table medicaments (_id INTEGER PRIMARY KEY, cis TEXT, \
+        cip13 TEXT, cip7 TEXT, mode_administration TEXT,\
+        nom TEXT, presentation TEXT, libelle_group TEXT,\
                    generic_type INTEGER)")
 
     cursor.execute("create table android_metadata (locale TEXT)")
@@ -295,23 +299,23 @@ def main():
             ON CIS.cis = CIS_CIP.cis\
             LEFT JOIN CIS_GENER\
             ON CIS.cis = CIS_GENER.cis\
-            WHERE CIS.etat_commercial=\"Commercialisée\"\
+            WHERE CIS.etat_commercial=\'Commercialisée\'\
             and CIS.admin_mode IN (\
-            \"orale\",\
-            \"nasale\",\
-            \"cutanée\",\
-            \"sous-cutanée\",\
-            \"ophtalmique\",\
-            \"rectale\",\
-            \"vaginale\",\
-            \"transdermique\",\
-            \"voie buccale autre\",\
-            \"intracaverneuse\",\
-            \"oropharyngée\",\
-            \"buccogingivale\",\
-            \"inhalée\",\
-            \"intramusculaire\",\
-            \"sublinguale\")\
+            \'orale\',\
+            \'nasale\',\
+            \'cutanée\',\
+            \'sous-cutanée\',\
+            \'ophtalmique\',\
+            \'rectale\',\
+            \'vaginale\',\
+            \'transdermique\',\
+            \'voie buccale autre\',\
+            \'intracaverneuse\',\
+            \'oropharyngée\',\
+            \'buccogingivale\',\
+            \'inhalée\',\
+            \'intramusculaire\',\
+            \'sublinguale\')\
             ")
 
         rows = cursor.fetchall()
